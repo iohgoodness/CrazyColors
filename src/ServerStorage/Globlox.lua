@@ -123,6 +123,7 @@ Glowblox.UnbindFromRenderStep = Glowblox.RunService.UnbindFromRenderStep
 if Glowblox.RunService:IsServer() then
 	Glowblox.ServerScriptService = game:GetService("ServerScriptService")
 	Glowblox.ServerStorage = game:GetService("ServerStorage")
+	Glowblox.Sync = game:GetService("ServerStorage"):WaitForChild('SyncScripts')
 else
 	Glowblox.Player = Glowblox.Players.LocalPlayer
 	Glowblox.Character = Glowblox.Player.Character or Glowblox.Player.CharacterAdded:wait()

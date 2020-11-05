@@ -5,6 +5,9 @@ local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local SyncScripts = ServerStorage:WaitForChild('SyncScripts')
 local DB = SyncScripts:WaitForChild('DB')
 local DBManage = require(DB:WaitForChild('DBManage'))
+
+local Server = require(ServerStorage.SyncScripts.Server)
+
 local gb
 
 local ServerInit = {}
@@ -70,22 +73,10 @@ function ServerInit:Init()
     DBManage:Establish(ServerInit.DatabaseID)
     ServerInit:HandlePlayers()
     ServerInit:MovingClientScripts()
-
+    
     _G = gb
 
-    --[[
-    gb.cr(function()
-        local dayCounter = Instance.new('IntValue', game.Lighting)
-        dayCounter.Name  = 'DayCount'
-        dayCounter.Value = 0
-        local minutesAfterMidnight = 0
-        while true do
-            minutesAfterMidnight = minutesAfterMidnight + 1
-            game.Lighting:SetMinutesAfterMidnight(minutesAfterMidnight)
-            wait(0.01)
-        end
-    end)()
-    ]]
+    Server:Init()
 end
 
 return ServerInit
