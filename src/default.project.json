@@ -1,12 +1,12 @@
 {
-  "name": "",
-  "tree": {
-    "$className": "DataModel",
-    "ServerStorage": {
-      "$className": "ServerStorage",
-      "SyncScripts": {
-        "$path": "ServerStorage"
+    "name": "",
+    "tree": {
+      "$className": "DataModel",
+      "ServerStorage": {
+        "$className": "ServerStorage",
+        "SyncScripts": {
+          "$path": "ServerStorage"
+        }
       }
     }
   }
-}
