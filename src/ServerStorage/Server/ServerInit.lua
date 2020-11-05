@@ -3,8 +3,8 @@ local ServerStorage = game:GetService('ServerStorage')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 
 local SyncScripts = ServerStorage:WaitForChild('SyncScripts')
-local Backbone = SyncScripts:WaitForChild('Backbone')
-local DBManage = require(Backbone:WaitForChild('DBManage'))
+local DB = SyncScripts:WaitForChild('DB')
+local DBManage = require(DB:WaitForChild('DBManage'))
 local gb
 
 local ServerInit = {}
@@ -70,6 +70,10 @@ function ServerInit:Init()
     DBManage:Establish(ServerInit.DatabaseID)
     ServerInit:HandlePlayers()
     ServerInit:MovingClientScripts()
+
+    _G = gb
+
+    print(_G.cr)
 
     gb.cr(function()
         local dayCounter = Instance.new('IntValue', game.Lighting)

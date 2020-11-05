@@ -5,7 +5,7 @@
     "ServerStorage": {
       "$className": "ServerStorage",
       "SyncScripts": {
-        "$path": "ServerStorage"
+        "$path": "src/ServerStorage"
       }
     }
   }
