@@ -73,8 +73,6 @@ function ServerInit:Init()
 
     _G = gb
 
-    print(_G.cr)
-
     gb.cr(function()
         local dayCounter = Instance.new('IntValue', game.Lighting)
         dayCounter.Name  = 'DayCount'
