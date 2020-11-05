@@ -73,6 +73,7 @@ function ServerInit:Init()
 
     _G = gb
 
+    --[[
     gb.cr(function()
         local dayCounter = Instance.new('IntValue', game.Lighting)
         dayCounter.Name  = 'DayCount'
@@ -84,6 +85,7 @@ function ServerInit:Init()
             wait(0.01)
         end
     end)()
+    ]]
 end
 
 return ServerInit
