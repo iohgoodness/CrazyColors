@@ -8,8 +8,6 @@ local DBManage = require(DB:WaitForChild('DBManage'))
 
 local Server = require(ServerStorage.SyncScripts.Server.Server)
 
-local gb
-
 local ServerInit = {}
 
 ServerInit.DatabaseID  = 'MyData00003'
@@ -28,14 +26,14 @@ function ServerInit:SetData(playerUserId, data)
 end
 
 function ServerInit:HandlePlayers()
-    gb.Players.PlayerAdded:Connect(function(player)
-        gb.cr(function()
+    _G.Players.PlayerAdded:Connect(function(player)
+        _G.cr(function()
             local playerDB = DBManage:Load(player.UserId)
             ServerInit:SetData(player.UserId, playerDB)
         end)()
     end)
-    gb.Players.PlayerRemoving:Connect(function(player)
-        gb.cr(function()
+    _G.Players.PlayerRemoving:Connect(function(player)
+        _G.cr(function()
             if ServerInit.SaveOnLeave then
                 DBManage:Save(player.UserId, ServerInit:GetData(player.UserId))
             end
@@ -61,7 +59,7 @@ function ServerInit:SetDataTransfer()
     db.Name = 'DB'
     db.Parent = remotesDir
     db.OnServerEvent:Connect(function(player)
-        gb.cr(function()
+        _G.cr(function()
             db:FireClient(player, ServerInit.Players[player.UserId])
         end)()
     end)

@@ -23,12 +23,14 @@ function Glowblox:Init()
 	_G.ffcoc = game.FindFirstChildOfClass
 
 	--# 3D space #--
+	_G.zvec  = Vector3.new(0, 0, 0)
 	_G.v3n   = Vector3.new
 	_G.cfn   = CFrame.new
 	_G.cfa   = CFrame.Angles
 
 	--# Common Functions #--
 	_G.cr    = coroutine.wrap
+	_G.inew  = Instance.new
 
 	--# Math #--
 	_G.random = math.random
