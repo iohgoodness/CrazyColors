@@ -6,7 +6,7 @@ local SyncScripts = ServerStorage:WaitForChild('SyncScripts')
 local DB = SyncScripts:WaitForChild('DB')
 local DBManage = require(DB:WaitForChild('DBManage'))
 
-local Server = require(ServerStorage.SyncScripts.Server)
+local Server = require(ServerStorage.SyncScripts.Server.Server)
 
 local gb
 
@@ -50,7 +50,7 @@ end
 
 function ServerInit:SetGloblox()
     SyncScripts:WaitForChild('Globlox').Parent = ReplicatedStorage
-    gb = require(ReplicatedStorage:WaitForChild('Globlox'))
+    require(game:GetService('ReplicatedStorage'):WaitForChild('Globlox')):Init()
 end
 
 function ServerInit:SetDataTransfer()
@@ -73,8 +73,6 @@ function ServerInit:Init()
     DBManage:Establish(ServerInit.DatabaseID)
     ServerInit:HandlePlayers()
     ServerInit:MovingClientScripts()
-    
-    _G = gb
 
     Server:Init()
 end
