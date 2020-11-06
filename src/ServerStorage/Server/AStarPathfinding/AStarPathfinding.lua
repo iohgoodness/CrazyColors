@@ -2,18 +2,19 @@
 local AStarPathfinding = {}
 
 local INCREMENT = 1
-local PART_SIZE = 1
+local PART_SIZE = 0.5
 
-local Start,Finish
+local Start,Finish,Dist
 
 local function createPoint(position)
     local p = _G.inew('Part')
+    p.CanCollide = false
     p.TopSurface = Enum.SurfaceType.SmoothNoOutlines
     p.Anchored = true
     p.Size = _G.v3n(PART_SIZE, PART_SIZE, PART_SIZE)
     p.Position = position
     --# Ensure node is updated
-    if workspace.Pathfinding.Grid:FindFirstChild(position.X .. '_' .. position.Z) then workspace.Pathfinding.Grid[(position.X .. '_' .. position.Z)]:Destroy() end
+    if workspace.Pathfinding.Grid:FindFirstChild(position.X .. '_' .. position.Z) then return end -- workspace.Pathfinding.Grid[(position.X .. '_' .. position.Z)]:Destroy()
     p.Name = position.X .. '_' .. position.Z
     local g, h, f = _G.inew('IntValue', p), _G.inew('IntValue', p), _G.inew('IntValue', p)
     g.Name = 'g' --# Distance from starting node
@@ -23,27 +24,40 @@ local function createPoint(position)
     h.Value = (position-Finish).magnitude
     f.Value = g.Value + h.Value
     p.Parent = workspace.Pathfinding.Grid
+    --if Dist < (position - Finish).magnitude then p:Destroy() return end
+    -- : 0.092741250991821
+    -- : 0.049764633178711
+    p.Touched:Connect(function() end)
+    local gtp = p:GetTouchingParts()
+    if #gtp > 0 then for k,v in pairs(gtp) do if v.Parent and v.Parent.Name == 'Blocking' then p:Destroy() end end end
 end
 
 local function getAroundPositions(position)
     return {
         --# adjacent
-        _G.v3n(position.X-INCREMENT, position.Y, position.Z),
-        _G.v3n(position.X+INCREMENT, position.Y, position.Z),
-        _G.v3n(position.X, position.Y, position.Z-INCREMENT),
-        _G.v3n(position.X, position.Y, position.Z+INCREMENT),
+        _G.v3n(position.X-INCREMENT, Start.Y, position.Z),
+        _G.v3n(position.X+INCREMENT, Start.Y, position.Z),
+        _G.v3n(position.X, Start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X, Start.Y, position.Z+INCREMENT),
 
         --# diagonal
-        _G.v3n(position.X-INCREMENT, position.Y, position.Z-INCREMENT),
-        _G.v3n(position.X+INCREMENT, position.Y, position.Z+INCREMENT),
-        _G.v3n(position.X+INCREMENT, position.Y, position.Z-INCREMENT),
-        _G.v3n(position.X-INCREMENT, position.Y, position.Z+INCREMENT),
+        _G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
+        _G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
     }
 end
 
 --# IN TESTING
 
 local closed = {}
+local explored = {}
+local function isExplored(nodeName)
+    for k,node in pairs(explored) do
+        if node.Name == nodeName then print 'explored this one' return true end
+    end
+    return false
+end
 local function isClosed(checkNode)
     for k,node in pairs(closed) do
         if node == checkNode then return true end
@@ -54,7 +68,7 @@ end
 local function getLowestHNode(duplicateNodes)
     local foundNode, lowest = nil, math.huge
     for k,node in pairs(duplicateNodes) do
-        if node.h.Value < lowest and not isClosed(node) then
+        if node.h.Value < lowest and not isClosed(node) and not isExplored(node.Name) then
             lowest = node.h.Value
             foundNode = node
         end
@@ -73,7 +87,7 @@ end
 local function getLowestFNode()
     local foundNode, lowest = nil, math.huge
     for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
-        if node.f.Value < lowest and not isClosed(node) then
+        if node.f.Value < lowest and not isClosed(node) and not isExplored(node.Name) then
             lowest = node.f.Value
             foundNode = node
         end
@@ -82,15 +96,20 @@ local function getLowestFNode()
     if #dupNodes>0 then
         local lowestHCostNode = getLowestHNode(dupNodes)
         closed[#closed+1] = lowestHCostNode
+        lowestHCostNode.BrickColor = BrickColor.new('Bright red')
+        explored[#explored+1] = foundNode.Name
         return lowestHCostNode
     else
         closed[#closed+1] = foundNode
+        foundNode.BrickColor = BrickColor.new('Bright red')
+        explored[#explored+1] = foundNode.Name
         return foundNode
     end
 end
 
 function AStarPathfinding:CreateGrid(partA, partB)
     Start, Finish = partA.Position, partB.Position
+    Dist = (Start - Finish).magnitude
     partA.Position = _G.v3n(_G.floor(partA.Position.X), partA.Position.Y, _G.floor(partA.Position.Z))
     partB.Position = _G.v3n(_G.floor(partB.Position.X), partB.Position.Y, _G.floor(partB.Position.Z))
 
@@ -98,13 +117,16 @@ function AStarPathfinding:CreateGrid(partA, partB)
         createPoint(pos)
     end
 
-    for i=1, 20 do
+    local start = tick()
+    while true do
         local foundNode = getLowestFNode()
+        if foundNode.h.Value < 2 then break end
+        foundNode.Position = foundNode.Position + _G.v3n(0, 0.5, 0)
         for k,pos in pairs(getAroundPositions(foundNode.Position)) do
             createPoint(pos)
         end
     end
-
+    print('finish time:', tick() - start)
 end
 
 function AStarPathfinding:Init()
