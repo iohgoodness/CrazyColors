@@ -46,10 +46,10 @@ local function getAroundPositions(position)
         -- 0.0042257308959961
 
         --# diagonal
-        --_G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
-        --_G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
-        --_G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
-        --_G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
+        _G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
+        _G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
     }
 end
 
