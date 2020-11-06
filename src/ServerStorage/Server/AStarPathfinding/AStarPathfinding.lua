@@ -2,7 +2,7 @@
 local AStarPathfinding = {}
 
 local INCREMENT = 1
-local PART_SIZE = 0.5
+local PART_SIZE = 1
 
 local Start,Finish
 
@@ -43,6 +43,52 @@ end
 
 --# IN TESTING
 
+local closed = {}
+local function isClosed(checkNode)
+    for k,node in pairs(closed) do
+        if node == checkNode then return true end
+    end
+    return false
+end
+
+local function getLowestHNode(duplicateNodes)
+    local foundNode, lowest = nil, math.huge
+    for k,node in pairs(duplicateNodes) do
+        if node.h.Value < lowest and not isClosed(node) then
+            lowest = node.h.Value
+            foundNode = node
+        end
+    end
+    return foundNode
+end
+local function duplicateFNode(foundNode)
+    local duplicates = {}
+    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
+        if node.f.Value == foundNode.f.Value then
+            duplicates[#duplicates+1] = node
+        end
+    end
+    return duplicates
+end
+local function getLowestFNode()
+    local foundNode, lowest = nil, math.huge
+    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
+        if node.f.Value < lowest and not isClosed(node) then
+            lowest = node.f.Value
+            foundNode = node
+        end
+    end
+    local dupNodes = duplicateFNode(foundNode)
+    if #dupNodes>0 then
+        local lowestHCostNode = getLowestHNode(dupNodes)
+        closed[#closed+1] = lowestHCostNode
+        return lowestHCostNode
+    else
+        closed[#closed+1] = foundNode
+        return foundNode
+    end
+end
+
 function AStarPathfinding:CreateGrid(partA, partB)
     Start, Finish = partA.Position, partB.Position
     partA.Position = _G.v3n(_G.floor(partA.Position.X), partA.Position.Y, _G.floor(partA.Position.Z))
@@ -52,66 +98,12 @@ function AStarPathfinding:CreateGrid(partA, partB)
         createPoint(pos)
     end
 
-    local lowest, nodes = math.huge, {}
-    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
-        if node.f.Value < lowest then
-            lowest = node.f.Value
-            nodes[#nodes+1] = node
+    for i=1, 20 do
+        local foundNode = getLowestFNode()
+        for k,pos in pairs(getAroundPositions(foundNode.Position)) do
+            createPoint(pos)
         end
     end
-    local lHNode, lowest = nil, math.huge
-    for k,node in pairs(nodes) do
-        if node.h.Value < lowest then
-            lowest = node.f.Value
-            lHNode = node
-        end
-    end
-    for k,pos in pairs(getAroundPositions(lHNode.Position)) do
-        createPoint(pos)
-    end
-
-
-
-    local lowest, nodes = math.huge, {}
-    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
-        if node.f.Value < lowest then
-            lowest = node.f.Value
-            nodes[#nodes+1] = node
-        end
-    end
-    local lHNode, lowest = nil, math.huge
-    for k,node in pairs(nodes) do
-        if node.h.Value < lowest then
-            lowest = node.f.Value
-            lHNode = node
-        end
-    end
-    for k,pos in pairs(getAroundPositions(lHNode.Position)) do
-        createPoint(pos)
-    end
-
-
-
-
-    local lowest, nodes = math.huge, {}
-    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
-        if node.f.Value < lowest then
-            lowest = node.f.Value
-            nodes[#nodes+1] = node
-        end
-    end
-    local lHNode, lowest = nil, math.huge
-    for k,node in pairs(nodes) do
-        if node.h.Value < lowest then
-            lowest = node.f.Value
-            lHNode = node
-        end
-    end
-    print(lHNode)
-    for k,pos in pairs(getAroundPositions(lHNode.Position)) do
-        createPoint(pos)
-    end
-
 
 end
 
