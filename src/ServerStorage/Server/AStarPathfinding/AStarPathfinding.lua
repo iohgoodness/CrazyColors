@@ -2,11 +2,11 @@
 local AStarPathfinding = {}
 
 local INCREMENT = 1
-local PART_SIZE = 0.5
+local PART_SIZE = 0.1
 
 local Start,Finish,Dist
 
-local function createPoint(position)
+local function createPoint(fromNodeName, position)
     local p = _G.inew('Part')
     p.CanCollide = false
     p.TopSurface = Enum.SurfaceType.SmoothNoOutlines
@@ -16,13 +16,15 @@ local function createPoint(position)
     --# Ensure node is updated
     if workspace.Pathfinding.Grid:FindFirstChild(position.X .. '_' .. position.Z) then return end -- workspace.Pathfinding.Grid[(position.X .. '_' .. position.Z)]:Destroy()
     p.Name = position.X .. '_' .. position.Z
-    local g, h, f = _G.inew('IntValue', p), _G.inew('IntValue', p), _G.inew('IntValue', p)
+    local g, h, f, from = _G.inew('IntValue', p), _G.inew('IntValue', p), _G.inew('IntValue', p), _G.inew('StringValue', p)
     g.Name = 'g' --# Distance from starting node
     h.Name = 'h' --# Distance from ending node
     f.Name = 'f' --# g + h
+    from.Name = 'from'
     g.Value = (position-Start).magnitude
     h.Value = (position-Finish).magnitude
     f.Value = g.Value + h.Value
+    from.Value = fromNodeName
     p.Parent = workspace.Pathfinding.Grid
     --if Dist < (position - Finish).magnitude then p:Destroy() return end
     -- : 0.092741250991821
@@ -40,11 +42,14 @@ local function getAroundPositions(position)
         _G.v3n(position.X, Start.Y, position.Z-INCREMENT),
         _G.v3n(position.X, Start.Y, position.Z+INCREMENT),
 
+        -- 0.0039372444152832
+        -- 0.0042257308959961
+
         --# diagonal
-        _G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
-        _G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
-        _G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
-        _G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
+        --_G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
+        --_G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
+        --_G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
+        --_G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
     }
 end
 
@@ -114,7 +119,7 @@ function AStarPathfinding:CreateGrid(partA, partB)
     partB.Position = _G.v3n(_G.floor(partB.Position.X), partB.Position.Y, _G.floor(partB.Position.Z))
 
     for k,pos in pairs(getAroundPositions(partA.Position)) do
-        createPoint(pos)
+        createPoint('', pos)
     end
 
     local start = tick()
@@ -123,9 +128,27 @@ function AStarPathfinding:CreateGrid(partA, partB)
         if foundNode.h.Value < 2 then break end
         foundNode.Position = foundNode.Position + _G.v3n(0, 0.5, 0)
         for k,pos in pairs(getAroundPositions(foundNode.Position)) do
-            createPoint(pos)
+            createPoint(foundNode.Name, pos)
         end
     end
+
+    local backtrack = {closed[#closed]}
+
+    local suc,res = true, nil
+    while suc do
+        suc, res = pcall(function()
+            backtrack[#backtrack+1] = workspace.Pathfinding.Grid[backtrack[#backtrack].from.Value]
+        end)
+    end
+
+    for k,node in pairs(backtrack) do
+        node.Name = #backtrack - (k-1)
+    end
+
+    for k,node in pairs(workspace.Pathfinding.Grid:GetChildren()) do
+        if tonumber(node.Name) == nil then node:Destroy() end
+    end
+
     print('finish time:', tick() - start)
 end
 
