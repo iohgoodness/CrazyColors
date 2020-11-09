@@ -1,12 +1,13 @@
 
 local AStarPathfinding = {}
 
-local INCREMENT = 1
+local INCREMENT = 1.2
+local INC_MULTI = 1.0
 local PART_SIZE = 0.1
 
-local Start,Finish,Dist
+--local Start,Finish,Dist
 
-local function createPoint(fromNodeName, position)
+local function createPoint(fromNodeName, position, start, finish)
     local p = _G.inew('Part')
     p.CanCollide = false
     p.TopSurface = Enum.SurfaceType.SmoothNoOutlines
@@ -21,8 +22,8 @@ local function createPoint(fromNodeName, position)
     h.Name = 'h' --# Distance from ending node
     f.Name = 'f' --# g + h
     from.Name = 'from'
-    g.Value = (position-Start).magnitude
-    h.Value = (position-Finish).magnitude
+    g.Value = (position-start).magnitude
+    h.Value = (position-finish).magnitude
     f.Value = g.Value + h.Value
     from.Value = fromNodeName
     p.Parent = workspace.Pathfinding.Grid
@@ -34,26 +35,24 @@ local function createPoint(fromNodeName, position)
     if #gtp > 0 then for k,v in pairs(gtp) do if v.Parent and v.Parent.Name == 'Blocking' then p:Destroy() end end end
 end
 
-local function getAroundPositions(position)
+local function getAroundPositions(position, start)
     return {
         --# adjacent
-        _G.v3n(position.X-INCREMENT, Start.Y, position.Z),
-        _G.v3n(position.X+INCREMENT, Start.Y, position.Z),
-        _G.v3n(position.X, Start.Y, position.Z-INCREMENT),
-        _G.v3n(position.X, Start.Y, position.Z+INCREMENT),
+        _G.v3n(position.X-INCREMENT, start.Y, position.Z),
+        _G.v3n(position.X+INCREMENT, start.Y, position.Z),
+        _G.v3n(position.X, start.Y, position.Z-INCREMENT),
+        _G.v3n(position.X, start.Y, position.Z+INCREMENT),
 
         -- 0.0039372444152832
         -- 0.0042257308959961
 
         --# diagonal
-        _G.v3n(position.X-INCREMENT, Start.Y, position.Z-INCREMENT),
-        _G.v3n(position.X+INCREMENT, Start.Y, position.Z+INCREMENT),
-        _G.v3n(position.X+INCREMENT, Start.Y, position.Z-INCREMENT),
-        _G.v3n(position.X-INCREMENT, Start.Y, position.Z+INCREMENT),
+        --_G.v3n(position.X-INCREMENT*INC_MULTI, Start.Y, position.Z-INCREMENT*INC_MULTI),
+        --_G.v3n(position.X+INCREMENT*INC_MULTI, Start.Y, position.Z+INCREMENT*INC_MULTI),
+        --_G.v3n(position.X+INCREMENT*INC_MULTI, Start.Y, position.Z-INCREMENT*INC_MULTI),
+        --_G.v3n(position.X-INCREMENT*INC_MULTI, Start.Y, position.Z+INCREMENT*INC_MULTI),
     }
 end
-
---# IN TESTING
 
 local closed = {}
 local explored = {}
@@ -112,33 +111,35 @@ local function getLowestFNode()
     end
 end
 
-function AStarPathfinding:CreateGrid(partA, partB)
-    Start, Finish = partA.Position, partB.Position
-    Dist = (Start - Finish).magnitude
+function AStarPathfinding:GetPath(partA, partB)
+    local start, finish = partA.Position, partB.Position
     partA.Position = _G.v3n(_G.floor(partA.Position.X), partA.Position.Y, _G.floor(partA.Position.Z))
     partB.Position = _G.v3n(_G.floor(partB.Position.X), partB.Position.Y, _G.floor(partB.Position.Z))
 
-    for k,pos in pairs(getAroundPositions(partA.Position)) do
-        createPoint('', pos)
+    for k,pos in pairs(getAroundPositions(partA.Position, start)) do
+        createPoint('', pos, start, finish)
     end
 
-    local start = tick()
+    local iterations = 0
     while true do
         local foundNode = getLowestFNode()
         if foundNode.h.Value < 2 then break end
         foundNode.Position = foundNode.Position + _G.v3n(0, 0.5, 0)
-        for k,pos in pairs(getAroundPositions(foundNode.Position)) do
-            createPoint(foundNode.Name, pos)
+        for k,pos in pairs(getAroundPositions(foundNode.Position, start)) do
+            createPoint(foundNode.Name, pos, start, finish)
         end
+        iterations = iterations + 1
+        if iterations > 1000 then warn 'failed to find path' break end
     end
 
     local backtrack = {closed[#closed]}
 
     local suc,res = true, nil
-    while suc do
+    while true do
         suc, res = pcall(function()
             backtrack[#backtrack+1] = workspace.Pathfinding.Grid[backtrack[#backtrack].from.Value]
         end)
+        if suc == false then break end
     end
 
     for k,node in pairs(backtrack) do
@@ -149,11 +150,12 @@ function AStarPathfinding:CreateGrid(partA, partB)
         if tonumber(node.Name) == nil then node:Destroy() end
     end
 
-    print('finish time:', tick() - start)
+    return backtrack
 end
 
 function AStarPathfinding:Init()
-    AStarPathfinding:CreateGrid(workspace.Pathfinding.Start, workspace.Pathfinding.Finish)
+    AStarPathfinding:GetPath(workspace.Pathfinding.Start, workspace.Pathfinding.Finish)
+    --AStarPathfinding:CreateGrid(workspace.Pathfinding.Start, workspace.Pathfinding.Finish)
 end
 
 return AStarPathfinding
