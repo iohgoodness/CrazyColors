@@ -93,7 +93,35 @@ function Glowblox:Init()
     --# @params: floatX(number to round), intY(decimal place to round to)
     _G.round = function(x, y, roundUp) if roundUp then return (math.ceil(x * (math.pow(10, y))))/math.pow(10, y) end return (math.floor(x * (math.pow(10, y))))/math.pow(10, y) end
 
+    --# A* Pathfinding
+    _G.astarpf = function(pointA, pointB)
+
+    end
+    
+    --# Linear Search
+    _G.lsearch = function(value, tbl, getName)
+        if getName then for k,v in pairs(tbl) do if v.Name == value then return v.Name end return false end else for k,v in pairs(tbl) do if v == value then return v end return false end end
+    end
+
+    --# Iterate through table and return same table of properties 
+    _G.RemakeTable = function(tbl, property)
+        local newTbl = {}
+        for k,v in pairs(tbl) do newTbl[#newTbl+1] = v[property] end
+        return newTbl
+    end
+
+    --# Stop all animations in either humanoid/animation controller
+    --# @params: obj(humanoid/animation controller), toExclude({})
+    _G.StopAnims = function(obj, toExclude)
+        for k,animation in pairs(obj:GetPlayingAnimationTracks()) do
+            if not _G.lsearch(animation) then
+
+            end
+        end
+    end
+
     --# Abreviate numbers
+    --# @params: num(number to convert into abreivated string)
     _G.abreviate = function(num)
         local s,m = tostring,math.floor
         if num>=1e+21 -1 then
@@ -127,6 +155,7 @@ function Glowblox:Init()
     end
 
     --# Convert value based between two numbers to new value based between two numbers
+    --# @params: 
     _G.normalize = function(oldMax, oldMin, newMax, newMin, value)
         return (((value - oldMin) * (newMax - newMin) ) / (oldMax - oldMin)) + newMin
     end
