@@ -27,7 +27,8 @@
         "CFrame",
         "BrickColor",
         "Color3",
-        "wait"
+        "wait",
+        "len"
     ],
     "Lua.diagnostics.disable": [
         "trailing-space"
