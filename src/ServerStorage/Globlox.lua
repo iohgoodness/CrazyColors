@@ -120,6 +120,13 @@ function Glowblox:Init()
         end
     end
 
+    --# Handle that will allow for buttons to have built in debounce
+
+    --# Implementation of FireRemote code from God Game
+    --# (Register Remote)
+    --# (Replicate Code to all other clients)
+    --# Swapping DB from server to client
+
     --# Abreviate numbers
     --# @params: num(number to convert into abreivated string)
     _G.abreviate = function(num)
