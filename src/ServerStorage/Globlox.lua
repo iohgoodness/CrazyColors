@@ -100,7 +100,21 @@ function Glowblox:Init()
     
     --# Linear Search
     _G.lsearch = function(value, tbl, getName)
-        if getName then for k,v in pairs(tbl) do if v.Name == value then return v.Name end return false end else for k,v in pairs(tbl) do if v == value then return v end return false end end
+        if getName then
+            for k,v in pairs(tbl) do
+                if v.Name == value then
+                    return v.Name
+                end
+                return false
+            end
+        else
+            for k,v in pairs(tbl) do
+                if v == value then
+                    return v
+                end
+                return false
+            end
+        end
     end
 
     --# Iterate through table and return same table of properties 
@@ -114,8 +128,8 @@ function Glowblox:Init()
     --# @params: obj(humanoid/animation controller), toExclude({})
     _G.StopAnims = function(obj, toExclude)
         for k,animation in pairs(obj:GetPlayingAnimationTracks()) do
-            if not _G.lsearch(animation) then
-
+            if not _G.lsearch(animation, true) then
+                animation:Stop()
             end
         end
     end
