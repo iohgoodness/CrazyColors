@@ -228,7 +228,7 @@ function Glowblox:Init()
     if _G.RunService:IsServer() then
         _G.ServerScriptService = game:GetService("ServerScriptService")
         _G.ServerStorage = game:GetService("ServerStorage")
-        _G.Sync = game:GetService("ServerStorage"):WaitForChild('SyncScripts')
+        _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
     else
         _G.Player = _G.Players.LocalPlayer
         _G.Character = _G.Player.Character or _G.Player.CharacterAdded:wait()
