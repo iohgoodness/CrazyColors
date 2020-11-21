@@ -97,6 +97,18 @@ function Glowblox:Init()
     _G.astarpf = function(pointA, pointB)
 
     end
+
+    --# Custom Tweening #--
+    _G.ti = function(time, easingStyle, easingDirection, repeatCount, reverses, delayTime)
+        return TweenInfo.new (
+            time or 0.4,
+            easingStyle or Enum.EasingStyle.Quad,
+            easingDirection or Enum.EasingDirection.Out,
+            repeatCount or 0,
+            reverses or false,
+            delayTime or 0
+        )
+    end
     
     --# Linear Search
     _G.lsearch = function(value, tbl, getName)
