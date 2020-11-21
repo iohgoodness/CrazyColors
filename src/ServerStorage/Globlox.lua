@@ -112,6 +112,23 @@ function Glowblox:Init()
             delayTime or 0
         )
     end
+
+    --# Get a deep copy of a table (because lua tables are seen as pointers, this will create and return a fresh new pointer/table copy)
+    -- @params: orig(original table to be copied)
+    _G.deepcopy = function(orig)
+        local orig_type = type(orig)
+        local copy
+        if orig_type == 'table' then
+            copy = {}
+            for orig_key, orig_value in next, orig, nil do
+                copy[deepcopy(orig_key)] = deepcopy(orig_value)
+            end
+            setmetatable(copy, deepcopy(getmetatable(orig)))
+        else
+            copy = orig
+        end
+        return copy
+    end
     
     --# Linear Search
     _G.lsearch = function(value, tbl, getName)
@@ -229,6 +246,21 @@ function Glowblox:Init()
         _G.ServerScriptService = game:GetService("ServerScriptService")
         _G.ServerStorage = game:GetService("ServerStorage")
         _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
+
+        --# Establish a database
+        --# @params: databaseID(string for unique database id)
+        _G.Establish = function(databaseID)
+            local database = nil
+            local success, data = pcall(function()
+                database = _G.DataStoreService:GetDataStore(databaseID)
+            end)
+            if not success then
+                warn 'failed to establish database'
+                wait(0.5)
+                _G.Establish(databaseID)
+            end
+            return database
+        end
     else
         _G.Player = _G.Players.LocalPlayer
         _G.Character = _G.Player.Character or _G.Player.CharacterAdded:wait()
