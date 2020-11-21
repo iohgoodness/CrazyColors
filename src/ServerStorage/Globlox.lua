@@ -57,6 +57,9 @@ function Glowblox:Init()
     --#                                     #--
     --# Custom functions for Lua/Roblox Lua #--
     --#                                     #--
+    
+
+    --# Roblox event connections #--
 
     _G.conns = {}
     _G.addconn = function(id, conn)
@@ -233,6 +236,29 @@ function Glowblox:Init()
         _G.UIS = _G.UserInputService
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
+    end
+
+    --# Gamepasses / Devproducts #--
+    _G.gamepass = function(player, id)
+        local gamePassID = id
+        local hasPass = false
+        
+        local success, message = pcall(function()
+            hasPass = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(player.UserId, gamePassID)
+        end)
+    
+        if not success then
+            warn("Error while checking if player has pass: " .. tostring(message))
+            return
+        end
+    
+        if not hasPass then
+            game:GetService("MarketplaceService"):PromptGamePassPurchase(player, gamePassID)
+        end
+    end
+
+    _G.devproduct = function(player, id)
+        game:GetService("MarketplaceService"):PromptProductPurchase(player, id)
     end
 end
 
