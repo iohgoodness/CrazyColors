@@ -207,7 +207,7 @@ function Glowblox:Init()
     _G.DataStoreService = game:GetService("DataStoreService")
     _G.Terrain = workspace:FindFirstChildOfClass('Terrain')
     _G.TweenService = game:GetService("TweenService")
-    _G.Market = game:GetService("MarketplaceService")
+    _G.MarketplaceService = game:GetService("MarketplaceService")
     _G.PhysicsService = game:GetService('PhysicsService')
     _G.TeleportService = game:GetService("TeleportService")
 
@@ -244,7 +244,7 @@ function Glowblox:Init()
         local hasPass = false
         
         local success, message = pcall(function()
-            hasPass = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(player.UserId, gamePassID)
+            hasPass = _G.MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassID)
         end)
     
         if not success then
@@ -253,12 +253,12 @@ function Glowblox:Init()
         end
     
         if not hasPass then
-            game:GetService("MarketplaceService"):PromptGamePassPurchase(player, gamePassID)
+            _G.MarketplaceService:PromptGamePassPurchase(player, gamePassID)
         end
     end
 
     _G.devproduct = function(player, id)
-        game:GetService("MarketplaceService"):PromptProductPurchase(player, id)
+        _G.MarketplaceService:PromptProductPurchase(player, id)
     end
 end
 
