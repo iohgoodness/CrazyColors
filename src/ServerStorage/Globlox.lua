@@ -242,24 +242,62 @@ function Glowblox:Init()
     _G.BindToRenderStep = _G.RunService.BindToRenderStep
     _G.UnbindFromRenderStep = _G.RunService.UnbindFromRenderStep
 
+    _G.PlayerDatabase = {}
+
     if _G.RunService:IsServer() then
         _G.ServerScriptService = game:GetService("ServerScriptService")
         _G.ServerStorage = game:GetService("ServerStorage")
         _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
 
+        _G.GameDatabase = nil
+
         --# Establish a database
         --# @params: databaseID(string for unique database id)
         _G.Establish = function(databaseID)
-            local database = nil
+            _G.GameDatabase = nil
             local success, data = pcall(function()
-                database = _G.DataStoreService:GetDataStore(databaseID)
+                _G.GameDatabase = _G.DataStoreService:GetDataStore(databaseID)
             end)
             if not success then
                 warn 'failed to establish database'
                 wait(0.5)
                 _G.Establish(databaseID)
             end
-            return database
+        end
+        _G.LoadData = function(playerUserId)
+            if _G.GameDatabase ~= nil then
+                local success, data = pcall(function()
+                    return _G.GameDatabase:GetAsync(playerUserId)
+                end)
+                if success then
+                    if data then
+                        return deepcopy(data)
+                    else
+                        return deepcopy(PlayerDatabase)
+                    end
+                else
+                    warn 'failed to load database'
+                    wait(0.5)
+                    _G.LoadData(playerUserId)
+                end
+            end
+            _G.SaveData = function(playerUserId, playerData)
+                if _G.GameDatabase ~= nil then
+                    local success, data = pcall(function()
+                        return _G.GameDatabase:GetAsync(playerUserId)
+                    end)
+                    if success then
+                        if data then
+                            return deepcopy(data)
+                        else
+                            return deepcopy(PlayerDatabase)
+                        end
+                    else
+                        warn 'failed to load database'
+                        wait(0.5)
+                        _G.LoadData(playerUserId)
+                    end
+                end
         end
     else
         _G.Player = _G.Players.LocalPlayer
