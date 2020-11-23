@@ -298,6 +298,7 @@ function Glowblox:Init()
                         _G.LoadData(playerUserId)
                     end
                 end
+            end
         end
     else
         _G.Player = _G.Players.LocalPlayer
