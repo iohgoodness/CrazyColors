@@ -268,7 +268,7 @@ function Glowblox:Init()
                 _G.Establish(databaseID)
             end
         end
-        
+
         --# Load/Get Data for a player
         --# @params: playerUserId(userid for player), retryTimer(time until retry starts again), verbose(give debug messages)
         _G.LoadData = function(playerUserId, retryTimer, verbose)
@@ -318,6 +318,20 @@ function Glowblox:Init()
         _G.UIS = _G.UserInputService
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
+
+        _G.UI = require(_G.ReplicatedStorage:WaitForChild('UI'))
+
+        local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
+        local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
+        for k,uiAsset in pairs(game.StarterGui:GetDescendants()) do
+            local defaultStr = uiAsset:GetFullName()
+            local replacement, count = defaultStr:gsub('StarterGui.', 'PlayerGui.')
+            local waitForChildVersion = waitforchild(replacement)
+            local varName = removePeriod(replacement:gsub('PlayerGui.', 'SpeedyUI.'))
+            local var = varName:gsub('SpeedyUI', '')
+            _G.UI[var] = waitForChildVersion
+        end
+        print(_G.UI)
     end
 
     --# Gamepasses / Devproducts #--
