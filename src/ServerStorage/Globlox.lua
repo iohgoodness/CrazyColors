@@ -121,9 +121,9 @@ function Glowblox:Init()
         if orig_type == 'table' then
             copy = {}
             for orig_key, orig_value in next, orig, nil do
-                copy[deepcopy(orig_key)] = deepcopy(orig_value)
+                copy[_G.deepcopy(orig_key)] = _G.deepcopy(orig_value)
             end
-            setmetatable(copy, deepcopy(getmetatable(orig)))
+            setmetatable(copy, _G.deepcopy(getmetatable(orig)))
         else
             copy = orig
         end
@@ -249,54 +249,59 @@ function Glowblox:Init()
         _G.ServerStorage = game:GetService("ServerStorage")
         _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
 
+        _G.DefaultPlayerDatabase = require(_G.Sync:WaitForChild('DB'):WaitForChild('PlayerData'))
+
         _G.GameDatabase = nil
+        _G.GameDatabaseVerbose = false
 
         --# Establish a database
         --# @params: databaseID(string for unique database id)
-        _G.Establish = function(databaseID)
+        _G.Establish = function(databaseID, retryTimer, verbose)
             _G.GameDatabase = nil
             local success, data = pcall(function()
                 _G.GameDatabase = _G.DataStoreService:GetDataStore(databaseID)
+                if verbose then print('Database', _G.GameDatabase, 'established') end
             end)
             if not success then
-                warn 'failed to establish database'
-                wait(0.5)
+                warn('failed to establish database... trying again in ' .. retryTimer or 0.5 .. ' seconds')
+                wait(retryTimer or 0.5)
                 _G.Establish(databaseID)
             end
         end
-        _G.LoadData = function(playerUserId)
+        _G.LoadData = function(playerUserId, retryTimer, verbose)
             if _G.GameDatabase ~= nil then
-                local success, data = pcall(function()
+                local success, alreadySavedData = pcall(function()
                     return _G.GameDatabase:GetAsync(playerUserId)
                 end)
                 if success then
-                    if data then
-                        return deepcopy(data)
+                    if alreadySavedData then
+                        if verbose then print('Player', playerUserId, 'found save from', _G.GameDatabase) end
+                        return alreadySavedData
                     else
-                        return deepcopy(PlayerDatabase)
+                        if verbose then print('Player', playerUserId, 'new db from', _G.GameDatabase) end
+                        return _G.deepcopy(_G.DefaultPlayerDatabase)
                     end
                 else
-                    warn 'failed to load database'
-                    wait(0.5)
+                    warn('failed to load database for '.. playerUserId ..'... trying again in ' .. retryTimer or 0.5 .. ' seconds')
+                    wait(retryTimer or 0.5)
                     _G.LoadData(playerUserId)
                 end
+            else
+                warn('database not yet established for '.. playerUserId ..' trying to read... trying again in ' .. retryTimer or 0.5 .. ' seconds')
+                wait(retryTimer or 0.5)
+                _G.LoadData(playerUserId, retryTimer, verbose)
             end
         end
-        _G.SaveData = function(playerUserId, playerData)
+        _G.SaveData = function(playerUserId, playerData, retryTimer, verbose)
             if _G.GameDatabase ~= nil then
-                local success, data = pcall(function()
-                    return _G.GameDatabase:GetAsync(playerUserId)
+                local success, error = pcall(function()
+                    _G.GameDatabase:SetAsync(playerUserId, playerData)
+                    if verbose then print('Player', playerUserId, 'saved to', _G.GameDatabase) end
                 end)
-                if success then
-                    if data then
-                        return deepcopy(data)
-                    else
-                        return deepcopy(PlayerDatabase)
-                    end
-                else
-                    warn 'failed to load database'
-                    wait(0.5)
-                    _G.LoadData(playerUserId)
+                if not success then
+                    warn('failed to save database for '.. playerUserId ..'... trying again in ' .. retryTimer or 0.5 .. ' seconds')
+                    wait(retryTimer or 0.5)
+                    _G.SaveData(playerUserId, playerData)
                 end
             end
         end
