@@ -281,22 +281,22 @@ function Glowblox:Init()
                     _G.LoadData(playerUserId)
                 end
             end
-            _G.SaveData = function(playerUserId, playerData)
-                if _G.GameDatabase ~= nil then
-                    local success, data = pcall(function()
-                        return _G.GameDatabase:GetAsync(playerUserId)
-                    end)
-                    if success then
-                        if data then
-                            return deepcopy(data)
-                        else
-                            return deepcopy(PlayerDatabase)
-                        end
+        end
+        _G.SaveData = function(playerUserId, playerData)
+            if _G.GameDatabase ~= nil then
+                local success, data = pcall(function()
+                    return _G.GameDatabase:GetAsync(playerUserId)
+                end)
+                if success then
+                    if data then
+                        return deepcopy(data)
                     else
-                        warn 'failed to load database'
-                        wait(0.5)
-                        _G.LoadData(playerUserId)
+                        return deepcopy(PlayerDatabase)
                     end
+                else
+                    warn 'failed to load database'
+                    wait(0.5)
+                    _G.LoadData(playerUserId)
                 end
             end
         end
