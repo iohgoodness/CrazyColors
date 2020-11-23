@@ -252,6 +252,8 @@ function Glowblox:Init()
 
         _G.DefaultPlayerDatabase = require(_G.Sync:WaitForChild('DB'):WaitForChild('PlayerData'))
 
+        -- okay
+
         _G.GameDatabase = nil
         _G.GameDatabaseVerbose = false
 
