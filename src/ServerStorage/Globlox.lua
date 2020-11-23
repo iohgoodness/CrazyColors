@@ -245,7 +245,7 @@ function Glowblox:Init()
 
     _G.PlayerDatabase = {}
 
-    if _G.RunService:IsServer() then
+    if _G.RunService:IsServer() then --# Running on a SERVER
         _G.ServerScriptService = game:GetService("ServerScriptService")
         _G.ServerStorage = game:GetService("ServerStorage")
         _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
@@ -314,7 +314,7 @@ function Glowblox:Init()
                 end
             end
         end
-    else
+    else --# Running on a Client
         _G.Player = _G.Players.LocalPlayer
         _G.Character = _G.Player.Character or _G.Player.CharacterAdded:wait()
         _G.UserInputService = game:GetService("UserInputService")
@@ -322,19 +322,18 @@ function Glowblox:Init()
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
 
+        --# Configure the UI
         _G.UI = require(_G.ReplicatedStorage:WaitForChild('Client'):WaitForChild('GeneratedUI'))
-        
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
         local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
         for k,uiAsset in pairs(game.StarterGui:GetDescendants()) do
             local defaultStr = uiAsset:GetFullName()
-            local replacement, count = defaultStr:gsub('StarterGui.', 'PlayerGui.')
+            local replacement, _ = defaultStr:gsub('StarterGui.', 'PlayerGui.')
             local waitForChildVersion = waitforchild(replacement)
             local varName = removePeriod(replacement:gsub('PlayerGui.', 'SpeedyUI.'))
             local var = varName:gsub('SpeedyUI', '')
             _G.UI[var] = waitForChildVersion
         end
-        print(_G.UI)
     end
 
     --# Gamepasses / Devproducts #--
