@@ -255,7 +255,7 @@ function Glowblox:Init()
         _G.GameDatabaseVerbose = false
 
         --# Establish a database
-        --# @params: databaseID(string for unique database id)
+        --# @params: databaseID(string for unique database id), retryTimer(time until retry starts again), verbose(give debug messages)
         _G.Establish = function(databaseID, retryTimer, verbose)
             _G.GameDatabase = nil
             local success, data = pcall(function()
@@ -268,6 +268,9 @@ function Glowblox:Init()
                 _G.Establish(databaseID)
             end
         end
+        
+        --# Load/Get Data for a player
+        --# @params: playerUserId(userid for player), retryTimer(time until retry starts again), verbose(give debug messages)
         _G.LoadData = function(playerUserId, retryTimer, verbose)
             if _G.GameDatabase ~= nil then
                 local success, alreadySavedData = pcall(function()
@@ -284,7 +287,7 @@ function Glowblox:Init()
                 else
                     warn('failed to load database for '.. playerUserId ..'... trying again in ' .. retryTimer or 0.5 .. ' seconds')
                     wait(retryTimer or 0.5)
-                    _G.LoadData(playerUserId)
+                    _G.LoadData(playerUserId, retryTimer, verbose)
                 end
             else
                 warn('database not yet established for '.. playerUserId ..' trying to read... trying again in ' .. retryTimer or 0.5 .. ' seconds')
@@ -292,6 +295,9 @@ function Glowblox:Init()
                 _G.LoadData(playerUserId, retryTimer, verbose)
             end
         end
+
+        --# Save data for a player
+        --# @params: playerUserId(userid for player), playerData(new copy custom for that player of the database), retryTimer(time until retry starts again), verbose(give debug messages)
         _G.SaveData = function(playerUserId, playerData, retryTimer, verbose)
             if _G.GameDatabase ~= nil then
                 local success, error = pcall(function()
@@ -301,7 +307,7 @@ function Glowblox:Init()
                 if not success then
                     warn('failed to save database for '.. playerUserId ..'... trying again in ' .. retryTimer or 0.5 .. ' seconds')
                     wait(retryTimer or 0.5)
-                    _G.SaveData(playerUserId, playerData)
+                    _G.SaveData(playerUserId, playerData, retryTimer, verbose)
                 end
             end
         end
