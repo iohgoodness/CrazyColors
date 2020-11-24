@@ -322,7 +322,7 @@ function Glowblox:Init()
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
 
-        --# Configure the UI
+        --# Configure the UI (need to double check)
         _G.UI = require(_G.ReplicatedStorage:WaitForChild('Client'):WaitForChild('GeneratedUI'))
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
         local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
