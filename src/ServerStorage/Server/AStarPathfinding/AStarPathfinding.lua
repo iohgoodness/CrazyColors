@@ -1,7 +1,7 @@
 
 local AStarPathfinding = {}
 
-local INCREMENT = 1.2
+local INCREMENT = 0.8
 local INC_MULTI = 1.0
 local PART_SIZE = 0.1
 
