@@ -337,6 +337,37 @@ function Glowblox:Init()
         print(_G.UI)
     end
 
+    --# Get all alive charactesr
+    _G.GetAliveCharacters = function()
+        local t = {}
+        for k,v in pairs(_G.Players:GetChildren()) do
+            if v.Character then
+                if v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 then
+                    t[#t+1] = v
+                end
+            end
+        end
+        return t
+    end
+
+    --# Call a function on each player
+    _G.IterPlayers = function(func)
+        for k,player in pairs(_G.Players:GetChildren()) do
+            func(player)
+        end
+    end
+
+    --# Call a function on each character
+    _G.IterChars = function(func)
+        for k,v in pairs(_G.Players:GetChildren()) do
+            if v.Character then
+                if v.Character:FindFirstChild('Humanoid') and v.Character.Humanoid.Health > 0 then
+                    func(v.Character)
+                end
+            end
+        end
+    end
+
     --# Gamepasses / Devproducts #--
     _G.gamepass = function(player, id)
         local gamePassID = id
