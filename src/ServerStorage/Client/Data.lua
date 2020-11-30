@@ -3,7 +3,7 @@ local Data = {}
 
 function Data:Init()
     Data.DB = nil
-    local db = _G.ReplicatedStorage:WaitForChild('Remotes'):WaitForChild('DB')
+    local db = _G.RS:WaitForChild('Remotes'):WaitForChild('DB')
     db.OnClientEvent:Connect(function(data)
         Data.DB = data
     end)

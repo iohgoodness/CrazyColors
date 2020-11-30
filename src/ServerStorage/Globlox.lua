@@ -22,6 +22,8 @@ function Glowblox:Init()
     _G.ffc   = game.FindFirstChild
     _G.ffcoc = game.FindFirstChildOfClass
 
+    _G.Clone = function(item, parent) item:Clone() item.Parent = parent return item end
+
     --# 3D space #--
     _G.zvec  = Vector3.new(0, 0, 0)
     _G.v3n   = Vector3.new
@@ -219,7 +221,7 @@ function Glowblox:Init()
     --#                 #--
 
     _G.Players = game:GetService("Players")
-    _G.ReplicatedStorage = game:GetService("ReplicatedStorage")
+    _G.RS = game:GetService("ReplicatedStorage")
     _G.Lighting = game:GetService("Lighting")
     _G.ReplicatedFirst = game:GetService("ReplicatedFirst")
     _G.DataStoreService = game:GetService("DataStoreService")
@@ -323,7 +325,7 @@ function Glowblox:Init()
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
 
         --# Configure the UI
-        _G.UI = require(_G.ReplicatedStorage:WaitForChild('Client'):WaitForChild('GeneratedUI'))
+        _G.UI = require(_G.RS:WaitForChild('Client'):WaitForChild('GeneratedUI'))
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
         local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
         for k,uiAsset in pairs(game.StarterGui:GetDescendants()) do
@@ -366,6 +368,27 @@ function Glowblox:Init()
                 end
             end
         end
+    end
+    
+    _G.TweenModel = function(model, CF, count, easingStyle)
+        local CFrameValue = Instance.new("CFrameValue")
+        
+        CFrameValue.Value = model:GetPrimaryPartCFrame()
+    
+        CFrameValue:GetPropertyChangedSignal("Value"):Connect(function()
+            if model then
+                if model.PrimaryPart then
+                    model:SetPrimaryPartCFrame(CFrameValue.Value)
+                end
+            end
+        end)
+    
+        local tween = game:GetService('TweenService'):Create(CFrameValue, TweenInfo.new(count or 0.05, Enum.EasingStyle.Linear or easingStyle,Enum.EasingDirection.Out, 0, false, 0), {Value = CF})
+        tween:Play()
+    
+        tween.Completed:Connect(function()
+            CFrameValue:Destroy()
+        end)
     end
 
     --# Gamepasses / Devproducts #--
