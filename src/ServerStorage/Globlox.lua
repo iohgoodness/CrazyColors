@@ -336,7 +336,7 @@ function Glowblox:Init()
             local var = varName:gsub('SpeedyUI', '')
             _G.UI[var] = waitForChildVersion
         end
-        print(_G.UI)
+        -- print(_G.UI)
     end
 
     --# Get all alive charactesr
