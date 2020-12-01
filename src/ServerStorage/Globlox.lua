@@ -369,8 +369,29 @@ function Glowblox:Init()
             end
         end
     end
+
+    _G.TweenModelPosition = function(model, pos, rot, count, easingStyle)
+        local Vector3Value = Instance.new("Vector3Value")
+        
+        Vector3Value.Value = model:GetPrimaryPartCFrame().p
     
-    _G.TweenModel = function(model, CF, count, easingStyle)
+        Vector3Value:GetPropertyChangedSignal("Value"):Connect(function()
+            if model then
+                if model.PrimaryPart then
+                    model:SetPrimaryPartCFrame(_G.cfn(pos) * _G.v3n(rot))
+                end
+            end
+        end)
+    
+        local tween = game:GetService('TweenService'):Create(Vector3Value, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingDirection.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = pos})
+        tween:Play()
+    
+        tween.Completed:Connect(function()
+            Vector3Value:Destroy()
+        end)
+    end
+    
+    _G.TweenModelCFrame = function(model, CF, count, easingStyle)
         local CFrameValue = Instance.new("CFrameValue")
         
         CFrameValue.Value = model:GetPrimaryPartCFrame()
@@ -383,7 +404,7 @@ function Glowblox:Init()
             end
         end)
     
-        local tween = game:GetService('TweenService'):Create(CFrameValue, TweenInfo.new(count or 0.05, Enum.EasingStyle.Linear or easingStyle,Enum.EasingDirection.Out, 0, false, 0), {Value = CF})
+        local tween = game:GetService('TweenService'):Create(CFrameValue, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingDirection.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = CF})
         tween:Play()
     
         tween.Completed:Connect(function()
