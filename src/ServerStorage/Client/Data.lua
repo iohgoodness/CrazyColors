@@ -2,10 +2,12 @@
 local Data = {}
 
 function Data:Init()
+    _G.Remotes = _G.RS:WaitForChild('Remotes')
     --# Start Database
     Data.DB = nil
-    local db = _G.RS:WaitForChild('Remotes'):WaitForChild('DB')
+    local db = _G.Remotes:WaitForChild('DB')
     db.OnClientEvent:Connect(function(data)
+        print (data)
         Data.DB = data
     end)
     db:FireServer()
@@ -13,9 +15,8 @@ function Data:Init()
     _G.db = Data.DB
 
     --# Handle Remotes
-    _G.RS:WaitForChild('Remotes')
     _G.FireRemote = function(remoteName, params)
-        local remote = _G.RS.Remotes:FindFirstChild(remoteName)
+        local remote = _G.Remotes:FindFirstChild(remoteName)
         if remote then
             remote:FireServer(params)
         else warn(remoteName, 'not registered') end

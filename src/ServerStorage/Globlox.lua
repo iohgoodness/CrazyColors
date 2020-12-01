@@ -22,7 +22,12 @@ function Glowblox:Init()
     _G.ffc   = game.FindFirstChild
     _G.ffcoc = game.FindFirstChildOfClass
 
-    _G.Clone = function(item, parent) item:Clone() item.Parent = parent return item end
+    _G.Clone = function(item, parent)
+        if parent then
+            item:Clone().Parent = parent
+        end
+        return item:Clone()
+    end
 
     --# 3D space #--
     _G.zvec  = Vector3.new(0, 0, 0)
@@ -370,6 +375,80 @@ function Glowblox:Init()
         end
     end
 
+    --[[
+    for k,v in pairs(game:GetDescendants()) do
+        if v:IsA('Script') or v:IsA('LocalScript') then
+            if v.Name ~= 'Server' and v.Name ~= 'Client' then
+                v:Destroy()
+            end
+        end
+    end
+    ]]
+
+    --[[
+    for k,model in pairs(workspace.Fixup:GetChildren()) do
+        local m = Instance.new('Model')
+        m.Name = model.Name
+        for k,v in pairs(model:GetDescendants()) do
+            if v:IsA('BasePart') or v:IsA('MeshPart') then
+                v.Anchored = true
+                v.CanCollide = false
+                v:Clone().Parent = m
+            end
+        end
+        m.Parent = model.Parent
+        model:Destroy()
+        local cf, size = m:GetBoundingBox()
+        local root = Instance.new('Part', m)
+        root.Size = size
+        root.CFrame = cf
+        root.Transparency = 1
+        root.Name = 'Root'
+        root.CanCollide = false
+        root.Anchored = true
+        m.PrimaryPart = root
+        for k,v in pairs(m:GetChildren()) do
+            if v ~= root then
+                local weld = Instance.new('WeldConstraint', root)
+                weld.Part0 = root
+                weld.Part1 = v
+            end
+        end
+    end
+    ]]
+
+    _G.InvisibleModel = function(model)
+        local parts = {}
+        for k,v in pairs(model:GetDescendants()) do
+            if v:IsA('BasePart') or v:IsA('MeshPart') then
+                parts[#parts+1] = v
+            end
+        end
+        local connections = {}
+        for k,v in pairs(parts) do
+            v.Transparency = 1
+        end
+    end
+
+    _G.TweenModelTransparency = function(model, count, value, ignoreParts)
+        local parts = {}
+        for k,v in pairs(model:GetDescendants()) do
+            if v:IsA('BasePart') or v:IsA('MeshPart') then
+                if v.Name ~= 'Root' then
+                    parts[#parts+1] = v
+                end
+            end
+        end
+        local connections = {}
+        for k,v in pairs(parts) do
+            local tween = _G.TweenService:Create(v, TweenInfo.new(count or 0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0), {Transparency = value})
+            tween:Play()
+            connections[v] = tween.Completed:Connect(function()
+                connections[v]:Disconnect()
+            end)
+        end
+    end
+
     _G.TweenModelPosition = function(model, pos, rot, count, easingStyle)
         local Vector3Value = Instance.new("Vector3Value")
         
@@ -383,7 +462,7 @@ function Glowblox:Init()
             end
         end)
     
-        local tween = game:GetService('TweenService'):Create(Vector3Value, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingDirection.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = pos})
+        local tween = _G.TweenService:Create(Vector3Value, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = pos})
         tween:Play()
     
         tween.Completed:Connect(function()
@@ -404,7 +483,7 @@ function Glowblox:Init()
             end
         end)
     
-        local tween = game:GetService('TweenService'):Create(CFrameValue, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingDirection.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = CF})
+        local tween = _G.TweenService:Create(CFrameValue, TweenInfo.new(count or 0.05, easingStyle or Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0), {Value = CF})
         tween:Play()
     
         tween.Completed:Connect(function()

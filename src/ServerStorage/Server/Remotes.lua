@@ -12,7 +12,10 @@ function Remotes:CreateRemotes()
         local remote = Instance.new('RemoteEvent', _G.RS.Remotes)
         remote.Name = remoteName
         remote.OnServerEvent:Connect(function(player, params)
-            remoteFunc(player, GetData(self, player.UserId), params)
+            local data = remoteFunc(self, player, GetData(self, player.UserId), params)
+            if data then
+                SetData(self, player.UserId, data)
+            end
         end)
     end
 end
