@@ -323,25 +323,35 @@ function Glowblox:Init()
         end
     else --# Running on a Client
         _G.Player = _G.Players.LocalPlayer
+        _G.PlayerGui = _G.Player.PlayerGui
         _G.Character = _G.Player.Character or _G.Player.CharacterAdded:wait()
         _G.UserInputService = game:GetService("UserInputService")
         _G.UIS = _G.UserInputService
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
 
+        local function stringToInstance(str)
+            local segments = str:split(".")
+            local current = _G.Player
+            for i,v in pairs(segments) do
+                current = current:WaitForChild(v)
+            end
+            return current
+        end
+
         --# Configure the UI
         _G.UI = require(_G.RS:WaitForChild('Client'):WaitForChild('GeneratedUI'))
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
-        local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
+        --local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. ":WaitForChild('" ..segment .. "')" else output = output .. segment end end return output end
+        local function waitforchild(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do if k > 1 then output = output .. "." ..segment .. "" else output = output .. segment end end return output end
         for k,uiAsset in pairs(game.StarterGui:GetDescendants()) do
             local defaultStr = uiAsset:GetFullName()
             local replacement, _ = defaultStr:gsub('StarterGui.', 'PlayerGui.')
             local waitForChildVersion = waitforchild(replacement)
             local varName = removePeriod(replacement:gsub('PlayerGui.', 'SpeedyUI.'))
-            local var = varName:gsub('SpeedyUI', '')
-            _G.UI[var] = waitForChildVersion
+            local var = (varName:gsub('SpeedyUI', '')):gsub('PlayerGui', '')
+            _G.UI[var] = stringToInstance(waitForChildVersion)
         end
-        -- print(_G.UI)
     end
 
     --# Get all alive charactesr
