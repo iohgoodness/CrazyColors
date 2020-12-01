@@ -9,6 +9,7 @@ local DROP_DOWN = 2.5
 local rounded
 local objectCopy
 local viewportframe
+local connection
 local placeConn = nil
 
 local pos, rot, cf  = _G.v3n(), 0, 0
@@ -43,6 +44,7 @@ function Placement:Confirm()
 end
 
 function Placement:PlaceObject(objectName)
+    Placement:MakeConnection()
     objectCopy = _G.RS.Assets.Placeables[Database.GetCategoryName(objectName)][objectName]:Clone()
     objectCopy.Parent = workspace
     local halfSize = objectCopy.PrimaryPart.Size.Y/2
@@ -56,16 +58,6 @@ function Placement:PlaceObject(objectName)
     end)
 end
 
-local tweenInfo = TweenInfo.new(
-    0.4,
-    Enum.EasingStyle.Quad,
-    Enum.EasingDirection.Out,
-    0,
-    false,
-    0
-)
-
-local MouseOverModule = require(game.ReplicatedStorage.MouseOverModule)
 
 local placeables = _G.RS:WaitForChild('Assets'):WaitForChild('Placeables')
 local function updateOptions(category)
@@ -81,12 +73,24 @@ local function updateOptions(category)
         viewportCamera.CFrame = _G.cfn( (obj.PrimaryPart.CFrame*_G.cfn(0, 0, -3)).p , obj.PrimaryPart.Position )
         viewportFrameClone.Parent = _G.UI.PlacingFrameFrame
         viewportFrameClone.TextButton.MouseButton1Click:Connect(function()
+            Placement:GiveUp()
             Placement:PlaceObject(v)
         end)
     end
 end
 
 local function tabUI()
+
+    local tweenInfo = TweenInfo.new(
+        0.4,
+        Enum.EasingStyle.Quad,
+        Enum.EasingDirection.Out,
+        0,
+        false,
+        0
+    )
+
+    local MouseOverModule = require(game.ReplicatedStorage.MouseOverModule)
     local min, max = -5, 5
     local leftTween, rightTween = nil, nil
     local iswiggling = false
@@ -144,9 +148,8 @@ local function tabUI()
     end
 end
 
-function Placement:Init()
-    tabUI()
-    _G.UIS.InputBegan:connect(function(inputObject, gameProcessedEvent)
+function Placement:MakeConnection()
+    connection = _G.UIS.InputBegan:connect(function(inputObject, gameProcessedEvent)
         if not gameProcessedEvent then
             if objectCopy then
                 if inputObject.KeyCode == Enum.KeyCode.E then
@@ -155,12 +158,18 @@ function Placement:Init()
                     Placement:Rotate(-1*staticRot)
                 elseif inputObject.KeyCode == Enum.KeyCode.X then
                     Placement:GiveUp()
+                    connection:Disconnect()
                 elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
                     Placement:Confirm()
+                    connection:Disconnect()
                 end
             end
         end
     end)
+end
+
+function Placement:Init()
+    coroutine.wrap(function() tabUI() end)()
 end
 
 return Placement

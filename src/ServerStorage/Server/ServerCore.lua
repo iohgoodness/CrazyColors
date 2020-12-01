@@ -65,9 +65,8 @@ function ServerCore:Init()
 
     ServerCore:HandlePlayers()
     ServerCore:MovingClientScripts()
-
-    local Remotes = require(ServerStorage.SyncScripts.Server.Remotes)
-    Remotes:CreateRemotes()
+    
+    require(ServerStorage.SyncScripts.Server.Remotes).CreateRemotes()
 
     Server:Init()
 
