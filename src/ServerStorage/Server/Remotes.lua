@@ -2,7 +2,6 @@
 local Remotes = {}
 
 local RemoteData = {
-    --['DropDown'] = require(_G.RS.Client.Placement).DropDown,
     DropDown = require(_G.RS.Client.Placement).DropDown,
 }
 

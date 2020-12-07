@@ -9,7 +9,7 @@ local DROP_DOWN = 2.5
 local rounded
 local objectCopy
 local viewportframe
-local connection
+local connection = nil
 local placeConn = nil
 
 local pos, rot, cf  = _G.v3n(), 0, 0
@@ -44,6 +44,7 @@ function Placement:Confirm()
 end
 
 function Placement:PlaceObject(objectName)
+    if connection then connection:Disconnect() end
     Placement:MakeConnection()
     objectCopy = _G.RS.Assets.Placeables[Database.GetCategoryName(objectName)][objectName]:Clone()
     objectCopy.Parent = workspace
