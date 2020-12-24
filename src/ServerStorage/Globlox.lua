@@ -11,6 +11,11 @@
 
 local Glowblox = {}
 
+CLICK_IMG = 'rbxassetid://5052045910' --# e.g. a mouse for the player to click on (an object that is in range, but not the closest image)
+QUICK_IMG = 'rbxassetid://5052045910' --# e.g. the letter 'e' (always going to be the closest object)
+PROXIMITY_FADE_TIME = 0.3
+PROXIMITY_DEFAULT_DISTANCE = 20
+
 function Glowblox:Init()
 
     --#                                   #--
@@ -21,6 +26,8 @@ function Glowblox:Init()
     _G.wfc   = game.WaitForChild
     _G.ffc   = game.FindFirstChild
     _G.ffcoc = game.FindFirstChildOfClass
+
+    _G.ud2 = UDim2.new
 
     _G.Clone = function(item, parent)
         if parent then
@@ -65,23 +72,6 @@ function Glowblox:Init()
     --#                                     #--
     --# Custom functions for Lua/Roblox Lua #--
     --#                                     #--
-    
-    --# Roblox proximity connections #--
-    _G.proxconns = {}
-    _G.addproxconn = function(id, conn)
-        if not _G.proxconns[id] then
-            _G.proxconns[id] = {}
-        end
-        _G.proxconns[id][#_G.proxconns[id]+1] = conn
-    end
-    _G.remproxconn = function(id)
-        if _G.proxconns[id] then
-            for k,conn in pairs(_G.proxconns[id]) do
-                conn:Disconnect()
-            end
-        end
-        _G.proxconns[id] = nil
-    end
 
     --# Roblox event connections #--
 
@@ -368,6 +358,134 @@ function Glowblox:Init()
             local var = (varName:gsub('SpeedyUI', '')):gsub('PlayerGui', '')
             _G.UI[var] = stringToInstance(waitForChildVersion)
         end
+
+        --# Roblox proximity connections #--
+
+        local function insertproxconn(part, clickimg, quickimg)
+            local ui = Instance.new('BillboardGui')
+            ui.Name = 'ui'
+            ui.MaxDistance = 45
+            ui.StudsOffset = _G.v3n(0, 1, 0)
+            ui.Size = UDim2.new(1, 0, 1, 0)
+            ui.AlwaysOnTop = true
+            local btn = Instance.new('ImageButton')
+            btn.Name = 'btn'
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.ScaleType = Enum.ScaleType.Fit
+            btn.Position = UDim2.new(0.5, 0, 1, 0)
+            btn.BackgroundTransparency = 1
+            btn.Image = CLICK_IMG
+            btn.AnchorPoint = Vector2.new(0.5, 1)
+            btn.Parent = ui
+            ui.Adornee = part
+            ui.Parent = _G.Player.PlayerGui.ProxConns
+            return ui
+        end
+
+        local function showProxConn(partData)
+            local part = partData.Part
+
+            local tween = _G.TweenService:Create(
+                partData.UI.btn,
+                TweenInfo.new(PROXIMITY_FADE_TIME),
+                {
+                    ImageTransparency = 0,
+                    Size = _G.ud2(1, 0, 1, 0),
+                }
+            )
+            tween:Play()
+
+            wait(PROXIMITY_FADE_TIME)
+        end
+
+        local function hideProxConn(partData)
+            local part = partData.Part
+
+            local tween = _G.TweenService:Create(
+                partData.UI.btn,
+                TweenInfo.new(PROXIMITY_FADE_TIME),
+                {
+                    ImageTransparency = 1,
+                    Size = _G.ud2(0, 0, 0, 0),
+                }
+            )
+            tween:Play()
+
+            wait(PROXIMITY_FADE_TIME)
+        end
+
+        _G.proxconns = {}
+        _G.addproxconn = function(category, part, dist, clickimg, quickimg, enabled)
+            if part:IsA'Model' then
+                local cf, size = part:GetBoundingBox()
+                local top = _G.v3n(cf.p.X, cf.p.Y + size.Y/2, cf.p.Z)
+            elseif part:IsA'BasePart' then
+                local p, s = part.Position, part.Size
+                local top = _G.v3n(p.X, p.Y + s.Y/2, p.Z)
+            end
+            if not _G.proxconns[category] then
+                _G.proxconns[category] = {}
+            end
+            local ui = insertproxconn(part, clickimg, quickimg)
+            _G.proxconns[category][#_G.proxconns[category]+1] = {
+                Part = part,
+                Dist = dist or PROXIMITY_DEFAULT_DISTANCE,
+                Enabled = enabled or false,
+                Transitioning = false,
+                UI = ui
+            }
+        end
+
+        local folder = Instance.new('Folder')
+        folder.Name = 'ProxConns'
+        folder.Parent = _G.PlayerGui
+
+        spawn(function()
+            _G.RunService:BindToRenderStep('proxconns', Enum.RenderPriority.First.Value, function()
+                if _G.Player and _G.Player.Character then
+                    if _G.Player.Character:FindFirstChild('Humanoid') and _G.Player.Character.Humanoid.Health > 0 and _G.Player.Character.PrimaryPart then
+                        local charPos = _G.Player.Character.PrimaryPart.Position
+                        for id,tbl in pairs(_G.proxconns) do
+                            for k,partData in pairs(tbl) do
+                                local part = partData.Part
+                                local partPos = nil
+                                if (part and part.Position) then
+                                    partPos = part.Position
+                                elseif part.PrimaryPart then
+                                    partPos = part.PrimaryPart
+                                elseif part:IsA'Model' and part.PrimaryPart == nil then warn 'trying to use proximity connection on a model without primarypart' end
+                                if partPos then
+                                    local mag = (partPos - charPos).magnitude
+                                    if mag < partData.Dist then
+                                        if not partData.Transitioning then
+                                            partData.Transitioning = true
+                                            --partData.Enabled = true
+                                            showProxConn(partData)
+                                            partData.Transitioning = false
+                                        end
+                                    else
+                                        if not partData.Transitioning then
+                                            partData.Transitioning = true
+                                            hideProxConn(partData)
+                                            --partData.Enabled = false
+                                            partData.Transitioning = false
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end)
+
+        --[[
+        _G.addproxconn('testparts', _G.wfc(workspace, 'b', 20))
+        _G.addproxconn('testparts2', _G.wfc(workspace, 'c', 20))
+        _G.addproxconn('testparts3', _G.wfc(workspace, 'd', 20))
+        _G.addproxconn('testparts3', _G.wfc(workspace, 'e', 20))
+        _G.addproxconn('testparts3', _G.wfc(workspace, 'f', 20))
+        ]]--
     end
 
     --# Get all alive charactesr
