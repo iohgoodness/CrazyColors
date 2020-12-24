@@ -66,6 +66,22 @@ function Glowblox:Init()
     --# Custom functions for Lua/Roblox Lua #--
     --#                                     #--
     
+    --# Roblox proximity connections #--
+    _G.proxconns = {}
+    _G.addproxconn = function(id, conn)
+        if not _G.proxconns[id] then
+            _G.proxconns[id] = {}
+        end
+        _G.proxconns[id][#_G.proxconns[id]+1] = conn
+    end
+    _G.remproxconn = function(id)
+        if _G.proxconns[id] then
+            for k,conn in pairs(_G.proxconns[id]) do
+                conn:Disconnect()
+            end
+        end
+        _G.proxconns[id] = nil
+    end
 
     --# Roblox event connections #--
 
