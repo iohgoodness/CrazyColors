@@ -1,1 +1,3 @@
-local UI = {}; return UI
+local UI = {};
+
+return UI
