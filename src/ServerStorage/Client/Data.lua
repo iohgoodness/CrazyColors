@@ -7,7 +7,6 @@ function Data:Init()
     Data.DB = nil
     local db = _G.Remotes:WaitForChild('DB')
     db.OnClientEvent:Connect(function(data)
-        print (data)
         Data.DB = data
     end)
     db:FireServer()
