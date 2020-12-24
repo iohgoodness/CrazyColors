@@ -13,10 +13,15 @@ local Glowblox = {}
 
 -- rbxassetid://6130157373
 
+--# CONFIGURATION #--
+
+--# Using the custom proximity promt #--
 CLICK_IMG = 'rbxassetid://6130157373' --# e.g. a mouse for the player to click on (an object that is in range, but not the closest image)
 QUICK_IMG = 'rbxassetid://6130139134' --# e.g. the letter 'e' (always going to be the closest object)
 PROXIMITY_FADE_TIME = 0.3
 PROXIMITY_DEFAULT_DISTANCE = 20
+
+--#  #--
 
 function Glowblox:Init()
 
@@ -28,8 +33,6 @@ function Glowblox:Init()
     _G.wfc   = game.WaitForChild
     _G.ffc   = game.FindFirstChild
     _G.ffcoc = game.FindFirstChildOfClass
-
-    _G.ud2 = UDim2.new
 
     _G.Clone = function(item, parent)
         if parent then
@@ -47,6 +50,9 @@ function Glowblox:Init()
     --# Common Functions #--
     _G.cr    = coroutine.wrap
     _G.inew  = Instance.new
+
+    --# UI #--
+    _G.ud2 = UDim2.new
 
     --# Math #--
     _G.random = math.random
@@ -444,23 +450,8 @@ function Glowblox:Init()
             }
 
             ui.btn.MouseButton1Click:Connect(function()
-                print(_G.proxconns[category][#_G.proxconns[category]].Part)
+                print(ui.Adornee)
             end)
-
-            --[[
-            _G.UIS.InputBegan:Connect(function(inputObject, gameProcessedEvent)
-                if inputObject.KeyCode == Enum.KeyCode.E then
-
-                elseif inputObject.UserInputType == Enum.UserInputType.Gamepad1 then
-                    if inputObject.KeyCode == Enum.KeyCode.ButtonA then
-
-                    end
-                elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
-
-                elseif inputObject.UserInputType == Enum.UserInputType.Touch then
-
-                end
-            end)]]
         end
 
         _G.UIS.InputBegan:Connect(function(inputObject, gameProcessedEvent)
