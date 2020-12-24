@@ -229,6 +229,10 @@ function Glowblox:Init()
         return (((value - oldMin) * (newMax - newMin) ) / (oldMax - oldMin)) + newMin
     end
 
+    _G.characterActive = function()
+
+    end
+
     --#                 #--
     --# Roblox Services #--
     --#                 #--
@@ -366,6 +370,7 @@ function Glowblox:Init()
         local function insertproxconn(part, clickimg, quickimg)
             local ui = Instance.new('BillboardGui')
             ui.Name = 'ui'
+            ui.Active = true
             ui.MaxDistance = 'inf'
             ui.ExtentsOffset = _G.v3n(0, 1.5, 0)
             ui.Size = UDim2.new(1.5, 0, 1.5, 0)
@@ -437,13 +442,48 @@ function Glowblox:Init()
                 UI = ui,
                 Lowest = false,
             }
+
+            ui.btn.MouseButton1Click:Connect(function()
+                print(_G.proxconns[category][#_G.proxconns[category]].Part)
+            end)
+
+            --[[
+            _G.UIS.InputBegan:Connect(function(inputObject, gameProcessedEvent)
+                if inputObject.KeyCode == Enum.KeyCode.E then
+
+                elseif inputObject.UserInputType == Enum.UserInputType.Gamepad1 then
+                    if inputObject.KeyCode == Enum.KeyCode.ButtonA then
+
+                    end
+                elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
+
+                elseif inputObject.UserInputType == Enum.UserInputType.Touch then
+
+                end
+            end)]]
         end
+
+        _G.UIS.InputBegan:Connect(function(inputObject, gameProcessedEvent)
+            if inputObject.KeyCode == Enum.KeyCode.E then
+                if _G.Player and _G.Player.Character then
+                    if _G.Player.Character:FindFirstChild('Humanoid') and _G.Player.Character.Humanoid.Health > 0 and _G.Player.Character.PrimaryPart then
+                        for id,tbl in pairs(_G.proxconns) do
+                            for k,partData in pairs(tbl) do
+                                if partData.UI.btn.Image == QUICK_IMG then
+                                    print(partData.Part)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
 
         local folder = Instance.new('Folder')
         folder.Name = 'ProxConns'
         folder.Parent = _G.PlayerGui
 
-        _G.RunService:BindToRenderStep('proxconns', Enum.RenderPriority.First.Value, function()
+        _G.RunService:BindToRenderStep('show_and_hide_proximity_image', Enum.RenderPriority.First.Value, function()
             if _G.Player and _G.Player.Character then
                 if _G.Player.Character:FindFirstChild('Humanoid') and _G.Player.Character.Humanoid.Health > 0 and _G.Player.Character.PrimaryPart then
                     local charPos = _G.Player.Character.PrimaryPart.Position
@@ -460,12 +500,14 @@ function Glowblox:Init()
                                 local mag = (partPos - charPos).magnitude
                                 if mag < partData.Dist then
                                     if not partData.Transitioning then
+                                        partData.Enabled = true
                                         partData.Transitioning = true
                                         showProxConn(partData)
                                         partData.Transitioning = false
                                     end
                                 else
                                     if not partData.Transitioning then
+                                        partData.Enabled = false
                                         partData.Transitioning = true
                                         hideProxConn(partData)
                                         partData.Transitioning = false
@@ -478,7 +520,23 @@ function Glowblox:Init()
             end
         end)
 
-        _G.RunService:BindToRenderStep('proxconns', Enum.RenderPriority.First.Value, function()
+        --[[
+        _G.RunService:BindToRenderStep('control_mouse_hover', Enum.RenderPriority.First.Value, function()
+            if _G.Player and _G.Player.Character then
+                if _G.Player.Character:FindFirstChild('Humanoid') and _G.Player.Character.Humanoid.Health > 0 and _G.Player.Character.PrimaryPart then
+                    for id,tbl in pairs(_G.proxconns) do
+                        for k,partData in pairs(tbl) do
+                            if partData.UI.btn.Image == QUICK_IMG then
+                                print(partData.Part)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+        ]]
+
+        _G.RunService:BindToRenderStep('change_proximity_image', Enum.RenderPriority.First.Value, function()
             if _G.Player and _G.Player.Character then
                 if _G.Player.Character:FindFirstChild('Humanoid') and _G.Player.Character.Humanoid.Health > 0 and _G.Player.Character.PrimaryPart then
                     local charPos = _G.Player.Character.PrimaryPart.Position
@@ -514,7 +572,6 @@ function Glowblox:Init()
         end)
 
         _G.addproxconn('testparts', _G.wfc(workspace, 'b', 20))
-        _G.addproxconn('testparts', _G.wfc(workspace, 'Model', 20))
         _G.addproxconn('testparts2', _G.wfc(workspace, 'c', 20))
         _G.addproxconn('testparts3', _G.wfc(workspace, 'd', 20))
         _G.addproxconn('testparts3', _G.wfc(workspace, 'e', 20))
