@@ -2,7 +2,7 @@
 local Remotes = {}
 
 local RemoteData = {
-    DropDown = require(_G.RS.Client.Placement).DropDown,
+    DropDown = require(_G.RS.Client.UI.Placement).DropDown,
 }
 
 local SetData, GetData = require(_G.ServerStorage.SyncScripts.Server.ServerCore).SetData, require(_G.ServerStorage.SyncScripts.Server.ServerCore).GetData

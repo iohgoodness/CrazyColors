@@ -34,12 +34,14 @@ function Glowblox:Init()
     _G.ffc   = game.FindFirstChild
     _G.ffcoc = game.FindFirstChildOfClass
 
+    --[[
     _G.Clone = function(item, parent)
         if parent then
             item:Clone().Parent = parent
         end
         return item:Clone()
     end
+    ]]
 
     --# 3D space #--
     _G.zvec  = Vector3.new(0, 0, 0)
@@ -245,6 +247,7 @@ function Glowblox:Init()
 
     _G.Players = game:GetService("Players")
     _G.RS = game:GetService("ReplicatedStorage")
+    -- spawn(function() repeat wait(1) until _G.RS:WaitForChild('Client'); _G.Client = _G.RS:WaitForChild('Client') end)
     _G.Lighting = game:GetService("Lighting")
     _G.ReplicatedFirst = game:GetService("ReplicatedFirst")
     _G.DataStoreService = game:GetService("DataStoreService")
@@ -461,6 +464,10 @@ function Glowblox:Init()
                         for id,tbl in pairs(_G.proxconns) do
                             for k,partData in pairs(tbl) do
                                 if partData.UI.btn.Image == QUICK_IMG then
+                                    if partData.Part.Name == 'Item' then
+                                        --require(_G.wfc(_G.wfc(_G.Client, 'Houses'), 'Doors')):Open(partData.Part.Parent)
+                                        require(_G.RS:WaitForChild('Client'):WaitForChild('Houses'):WaitForChild('Doors')):Open(partData.Part.Parent)
+                                    end
                                     print(partData.Part)
                                 end
                             end
@@ -562,11 +569,14 @@ function Glowblox:Init()
             end
         end)
 
+        _G.addproxconn('x123', _G.wfc(workspace.NewDoors, 'Item', 20))
+
         _G.addproxconn('testparts', _G.wfc(workspace, 'b', 20))
         _G.addproxconn('testparts2', _G.wfc(workspace, 'c', 20))
         _G.addproxconn('testparts3', _G.wfc(workspace, 'd', 20))
         _G.addproxconn('testparts3', _G.wfc(workspace, 'e', 20))
         _G.addproxconn('testparts3', _G.wfc(workspace, 'f', 20))
+        _G.addproxconn('testparts4', _G.wfc(workspace, 'g', 20))
     end
 
     --# Get all alive charactesr

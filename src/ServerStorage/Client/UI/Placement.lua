@@ -3,8 +3,9 @@ local Database = require(_G.RS:WaitForChild('Sandbox'):WaitForChild(script.Name)
 
 local Placement = {}
 
-local ROUNDING_INC = 0.05
-local DROP_DOWN = 2.5
+local ROUNDING_INC = 0.01
+local DROP_DOWN = 1.4
+local WAIT_TIME = 0.1--0.09
 
 local rounded
 local objectCopy
@@ -54,8 +55,8 @@ function Placement:PlaceObject(objectName)
         pos = _G.Mouse.Hit.p
         local adjustedPos = _G.v3n((math.ceil(pos.X/ROUNDING_INC)*ROUNDING_INC), pos.Y+halfSize, (math.ceil(pos.Z/ROUNDING_INC)*ROUNDING_INC))
         cf = (_G.cfn(adjustedPos) * _G.cfa(0, math.rad(rot), 0))
-        _G.TweenModelCFrame(objectCopy, cf, 0.09, Enum.EasingStyle.Linear)
-        wait(0.1)
+        _G.TweenModelCFrame(objectCopy, cf, WAIT_TIME, Enum.EasingStyle.Quad)
+        wait(WAIT_TIME + 0.01)
     end)
 end
 
