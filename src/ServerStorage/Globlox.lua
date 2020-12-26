@@ -599,19 +599,6 @@ function Glowblox:Init()
                 end
             end
         end)
-
-        _G.addproxconn('x123', _G.wfc(workspace.NewDoors, 'Item', 20))
-
-        _G.addproxconn('testparts', _G.wfc(workspace, 'b', 20))
-        _G.addproxconn('testparts2', _G.wfc(workspace, 'c', 20))
-        _G.addproxconn('testparts3', _G.wfc(workspace, 'd', 20))
-        _G.addproxconn('testparts3', _G.wfc(workspace, 'e', 20))
-        _G.addproxconn('testparts3', _G.wfc(workspace, 'f', 20))
-        _G.addproxconn('testparts4', _G.wfc(workspace, 'g', 20))
-        _G.addproxconn('testparts4', _G.wfc(workspace, '1', 20))
-        _G.addproxconn('testparts4', _G.wfc(workspace, '2', 20))
-        _G.addproxconn('testparts4', _G.wfc(workspace, '3', 20))
-        _G.addproxconn('testparts4', _G.wfc(workspace, '4', 20))
     end
 
     --# Get all alive charactesr
