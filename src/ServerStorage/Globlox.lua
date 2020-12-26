@@ -237,6 +237,12 @@ function Glowblox:Init()
         return (((value - oldMin) * (newMax - newMin) ) / (oldMax - oldMin)) + newMin
     end
 
+    AUTH = {
+        username = 'soap',
+        password = '',
+        game_name = 'Gods of Glory'
+    }
+
     _G.characterActive = function()
 
     end
@@ -279,8 +285,6 @@ function Glowblox:Init()
         _G.Sync = _G.ServerStorage:WaitForChild('SyncScripts')
 
         _G.DefaultPlayerDatabase = require(_G.Sync:WaitForChild('DB'):WaitForChild('PlayerData'))
-
-        -- okay
 
         _G.GameDatabase = nil
         _G.GameDatabaseVerbose = false
@@ -342,6 +346,33 @@ function Glowblox:Init()
                 end
             end
         end
+
+        local HttpService = game:GetService("HttpService")
+        _G.SendStats = function(playerUserId, params)
+            coroutine.wrap(function()
+                local success, response = pcall(function()
+
+                    params.username = AUTH.username
+                    params.password = AUTH.password
+                    params.game_name = AUTH.game_name
+
+                    params.UserId = playerUserId
+
+                    local data = ""
+                    for k, v in pairs(params) do
+                        data = data .. ("&%s=%s"):format(
+                            HttpService:UrlEncode(k),
+                            HttpService:UrlEncode(v)
+                        )
+                    end
+                    data = data:sub(2)
+                    print('sending', data)
+                    res = HttpService:PostAsync('', data, Enum.HttpContentType.ApplicationUrlEncoded, false) --# FOR NOW, IP ADDY IS HIDDEN (UNTIL DOMAIN/HOST BOUGHT)
+                    print('[STATS]\n', res, '\n')
+                end)
+            end)()
+        end
+        
     else --# Running on a Client
         _G.Player = _G.Players.LocalPlayer
         _G.PlayerGui = _G.Player.PlayerGui
