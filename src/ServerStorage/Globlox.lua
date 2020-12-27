@@ -405,6 +405,21 @@ function Glowblox:Init()
             _G.UI[var] = stringToInstance(waitForChildVersion)
         end
 
+        --# Room Rendering #--
+        --# BUILT FOR THE CLIENTS #--
+
+        _G.RenderLocation = workspace
+        _G.DerenderLocation = _G.RS
+
+        _G.SwapRender = function(roomName)
+            if roomName == nil then warn 'Must pass a room name!' return end
+            if _G.RenderLocation:FindFirstChild(roomName) then
+                _G.RenderLocation[roomName].Parent = _G.DerenderLocation
+            elseif _G.DerenderLocation:FindFirstChild(roomName) then
+                _G.DerenderLocation[roomName].Parent = _G.RenderLocation
+            end
+        end
+
         --# Roblox proximity connections #--
 
         local function insertproxconn(part, clickimg, quickimg)
@@ -495,11 +510,16 @@ function Glowblox:Init()
                         for id,tbl in pairs(_G.proxconns) do
                             for k,partData in pairs(tbl) do
                                 if partData.UI.btn.Image == QUICK_IMG then
-                                    if partData.Part.Name == 'Item' then
-                                        --require(_G.wfc(_G.wfc(_G.Client, 'Houses'), 'Doors')):Open(partData.Part.Parent)
-                                        require(_G.RS:WaitForChild('Client'):WaitForChild('Houses'):WaitForChild('Doors')):Open(partData.Part.Parent)
+                                    local partName = partData.Part.Name
+                                    --if partData.Part.Name == 'Item' then
+                                    --    --require(_G.wfc(_G.wfc(_G.Client, 'Houses'), 'Doors')):Open(partData.Part.Parent)
+                                    --    require(_G.RS:WaitForChild('Client'):WaitForChild('Houses'):WaitForChild('Doors')):Open(partData.Part.Parent)
+                                    --end
+                                    --print(partData.Part)
+                                    if partName == 'test' then
+                                        _G.SwapRender('House1')
+                                        --_G.RenderRoom('House1')
                                     end
-                                    print(partData.Part)
                                 end
                             end
                         end
@@ -599,6 +619,9 @@ function Glowblox:Init()
                 end
             end
         end)
+
+        _G.addproxconn('test', _G.wfc(workspace, 'test'), 20)
+
     end
 
     --# Get all alive charactesr
