@@ -72,10 +72,10 @@ function Glowblox:Init()
     _G.tan    = math.tan
     _G.cosh   = math.cosh
 
-    _G.clamp  = math.clamp
+    --_G.clamp  = math.clamp
     _G.deg    = math.deg
     _G.exp    = math.exp
-    _G.noise  = math.noise
+    --_G.noise  = math.noise
     _G.pow    = math.pow
     _G.rad    = math.rad
 

@@ -9,7 +9,9 @@ function Client:Init()
     require(_G.RS:WaitForChild('Client'):WaitForChild('Data')):Init()
 
     --# Game Modules
-    require(_G.RS:WaitForChild('Client'):WaitForChild('UI'):WaitForChild('Placement')):Init()
+    --require(_G.RS:WaitForChild('Client'):WaitForChild('UI'):WaitForChild('Placement')):Init()
+
+    --require(_G.RS:WaitForChild('Client'):WaitForChild('MetatablesTesting')):Init()
 end
 
 return Client

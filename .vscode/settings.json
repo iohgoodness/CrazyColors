@@ -28,9 +28,10 @@
         "BrickColor",
         "Color3",
         "wait",
-        "len"
+        "len",
+        "newproxy"
     ],
     "Lua.diagnostics.disable": [
-        "trailing-space"
+        "trailing-space",
     ]
 }
