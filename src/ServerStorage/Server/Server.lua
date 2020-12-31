@@ -4,6 +4,9 @@ local Server = {}
 function Server:Init()
     -- require(_G.Sync.Server.AStarPathfinding.AStarPathfinding):Init()
 
+
+    --[[
+
     local Data = {
         Leaderstats = {
             Cash = 0,
@@ -82,7 +85,7 @@ function Server:Init()
     --print()
 
 
-
+    ]]
 
 
 
