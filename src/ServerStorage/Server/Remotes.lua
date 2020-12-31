@@ -54,6 +54,7 @@ function Remotes.Register()
                 re.OnServerEvent:Connect(function(player, params)
                     for _,otherPlayer in pairs(_G.Players:GetChildren()) do
                         if player.UserId ~= otherPlayer.UserId then
+                            params.OriginPlayer = player
                             re.FireClient(
                                 {
                                     ScriptName = remoteData.Script:GetFullName(),
