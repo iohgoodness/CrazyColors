@@ -68,10 +68,13 @@ function Server:Init()
 
     local p = tracktable(data1)
 
-    --p.y = 123
-    --data1.y = 123
+    --print(data1)
 
-    print(data1)
+    p.Leaderstats = {}
+    data1.Leaderstats = {}
+    --p.Leaderstats.Cash = 100
+    --p.Leaderstats.Rebirths = 0
+    --data1.Leaderstats.Rebirths = 0
     
     --print(data1.y)
     --data1.y = '123'
