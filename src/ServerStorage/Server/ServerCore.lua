@@ -14,9 +14,9 @@ local SaveOnLeave = false
 
 ServerCore.Players = {}
 
-function ServerCore:GetData(playerUserId) return ServerCore.Players[playerUserId] end
+function ServerCore.GetData(playerUserId) return ServerCore.Players[playerUserId] end
 
-function ServerCore:SetData(playerUserId, data) ServerCore.Players[playerUserId] = data end
+function ServerCore.SetData(playerUserId, data) ServerCore.Players[playerUserId] = data end
 
 --# Handle incoming and leaving players
 function ServerCore:HandlePlayers()
@@ -66,7 +66,9 @@ function ServerCore:Init()
     ServerCore:HandlePlayers()
     ServerCore:MovingClientScripts()
     
-    require(ServerStorage.SyncScripts.Server.Remotes).CreateRemotes()
+    --require(ServerStorage.SyncScripts.Server.Remotes).CreateRemotes()
+
+    require(ServerStorage.SyncScripts.Server.Remotes).Register()
 
     Server:Init()
 

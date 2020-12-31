@@ -1,7 +1,7 @@
 
 --# iohgoodness #--
---# 10/16/2020 #--
---# Last Update: 11/23/2020 #--
+--# Created: 10/16/2020 #--
+--# Last Update: 12/31/2020 #--
 
 --# Easability Module #--
 --# Usable for both CLIENT/SERVER to require #--
@@ -27,6 +27,23 @@ PROXIMITY_DEFAULT_DISTANCE = 20
 --#  #--
 
 function Glowblox:Init()
+
+    _G.StringToInstance = function(str, parent)
+        local segments = str:split(".")
+        local current = parent or game
+        for i,v in pairs(segments) do
+            current = current[v]
+        end
+        return current or 'DNE'
+    end
+
+    _G.split = function(s, delimiter)
+        local result = {}
+        for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+            table.insert(result, match)
+        end
+        return result
+    end
 
     --#                                   #--
     --# Built in Lua/Roblox Lua Functions #--
