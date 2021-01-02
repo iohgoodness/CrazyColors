@@ -10,6 +10,9 @@ function Client:Init()
 
     --# Game Modules
     --require(_G.RS:WaitForChild('Client'):WaitForChild('UI'):WaitForChild('Placement')):Init()
+    --require(_G.RS:WaitForChild('Client'):WaitForChild('GridSystem')).Init()
+
+    require(_G.RS:WaitForChild('Client'):WaitForChild('DoubleJump')).Init()
 
     --require(_G.RS:WaitForChild('Client'):WaitForChild('MetatablesTesting')):Init()
 end

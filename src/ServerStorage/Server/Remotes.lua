@@ -37,8 +37,7 @@ function Remotes.Register()
     clientToHandle.Name = 'ClientToHandle'
 
     for remoteName, remoteData in pairs(AllRemotes) do
-        local connType, remType = _G.split(remoteData.Type)[1], _G.split(remoteData.Type)[2]
-        
+        local connType, remType = _G.split(remoteData.Type, '.')[1], _G.split(remoteData.Type, '.')[2]
         if remType == '1' then
             local re = _G.inew('RemoteEvent')
             re.Name = remoteName

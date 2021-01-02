@@ -15,6 +15,8 @@ local Glowblox = {}
 
 --# CONFIGURATION #--
 
+-- local m = 1.1; workspace.MeshPart.Size = workspace.MeshPart.Size * Vector3.new(m, m, m)
+
 --# Using the custom proximity promt #--
 USE_PROXIMITY = false
 

@@ -65,8 +65,6 @@ function ServerCore:Init()
 
     ServerCore:HandlePlayers()
     ServerCore:MovingClientScripts()
-    
-    --require(ServerStorage.SyncScripts.Server.Remotes).CreateRemotes()
 
     require(ServerStorage.SyncScripts.Server.Remotes).Register()
 
