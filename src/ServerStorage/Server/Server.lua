@@ -17,3 +17,4 @@ function Server.NewPlayer(player)
 end
 
 return Server
+

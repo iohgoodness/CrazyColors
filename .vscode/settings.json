@@ -33,5 +33,6 @@
     ],
     "Lua.diagnostics.disable": [
         "trailing-space",
+        "undefined-field"
     ]
 }

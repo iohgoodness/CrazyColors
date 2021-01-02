@@ -13,6 +13,14 @@ function Data.Init()
     repeat wait() until Data.DB ~= nil
     _G.db = Data.DB
 
+    --# Character Check
+    local timeout = 50
+    repeat
+        wait(0.1)
+        timeout = timeout - 1
+    until (timeout == 0 or _G.Player.Character)
+    if _G.Player.Character == nil then return end --# Character was never loaded ( player left the game while still being configured )
+
     local function handleRemote(remote)
         remote.OnClientEvent:Connect(function(funcData, params)
             (_G.StringToInstance(funcData.ScriptName))[funcData.FuncName](params)
