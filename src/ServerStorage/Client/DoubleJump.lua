@@ -1,14 +1,14 @@
 
 local DoubleJump = {}
 
-local lastSpace = 0
 local j1Time, j2Time, j3Time = 0.8, 1.1, 2
 local j1, j2, j3 = false, false, false
+local jp1, jp2, jp3 = 0, 85, 50
 
 --# os.time
 
-local function up()
-    _G.Player.Character.PrimaryPart.Velocity = _G.v3n(0, 85, 0)
+local function up(jp)
+    _G.Player.Character.PrimaryPart.Velocity = _G.v3n(0, jp, 0)
 end
 
 local function reset()
@@ -36,11 +36,11 @@ function DoubleJump.Init()
                                 reset()
                             end
                         end)()
-                        up()
+                        up(jp2)
                     elseif j2 then
                         if not j3 then
                             j3 = true
-                            up()
+                            up(jp3)
                             _G.cr(function()
                                 wait(j3Time)
                                 reset()
