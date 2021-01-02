@@ -37,13 +37,13 @@ function ServerCore:HandlePlayers()
 end
 
 --# Move client scripts visible to client
-function ServerCore:MovingClientScripts() SyncScripts:WaitForChild('Client').Parent = ReplicatedStorage end
+function ServerCore.MovingClientScripts() SyncScripts:WaitForChild('Client').Parent = ReplicatedStorage end
 
 --# Set and move globlox for client
-function ServerCore:SetGloblox() require(SyncScripts:WaitForChild('Globlox')):Init() SyncScripts:WaitForChild('Globlox').Parent = ReplicatedStorage end
+function ServerCore.SetGloblox() require(SyncScripts:WaitForChild('Globlox')):Init() SyncScripts:WaitForChild('Globlox').Parent = ReplicatedStorage end
 
 --# Setup portal for data transfering
-function ServerCore:SetDataTransfer()
+function ServerCore.SetDataTransfer()
     local Remotes = Instance.new('Folder')
     Remotes.Name = 'Remotes'
     Remotes.Parent = ReplicatedStorage
@@ -58,17 +58,17 @@ end
 
 function ServerCore:Init()
 
-    ServerCore:SetGloblox()
-    ServerCore:SetDataTransfer()
+    ServerCore.SetGloblox()
+    ServerCore.SetDataTransfer()
 
     _G.Establish(DatabaseID)
 
-    ServerCore:HandlePlayers()
-    ServerCore:MovingClientScripts()
+    ServerCore.HandlePlayers()
+    ServerCore.MovingClientScripts()
 
     require(ServerStorage.SyncScripts.Server.Remotes).Register()
 
-    Server:Init()
+    Server.Init()
 
     if SaveOnClose then
         game:BindToClose(function()

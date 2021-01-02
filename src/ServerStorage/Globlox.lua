@@ -28,7 +28,7 @@ PROXIMITY_DEFAULT_DISTANCE = 20
 
 --#  #--
 
-function Glowblox:Init()
+function Glowblox.Init()
 
     _G.StringToInstance = function(str, parent)
         local segments = str:split(".")

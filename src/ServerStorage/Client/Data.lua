@@ -1,7 +1,7 @@
 
 local Data = {}
 
-function Data:Init()
+function Data.Init()
     _G.Remotes = _G.RS:WaitForChild('Remotes')
     --# Start Database
     Data.DB = nil
