@@ -3,7 +3,7 @@ local DoubleJump = {}
 
 local j1Time, j2Time, j3Time = 0.8, 1.1, 2
 local j1, j2, j3 = false, false, false
-local jp1, jp2, jp3 = 0, 85, 50
+local jp1, jp2, jp3 = 0, 85, 95
 
 --# os.time
 

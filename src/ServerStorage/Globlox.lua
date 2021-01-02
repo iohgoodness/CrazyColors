@@ -389,7 +389,7 @@ function Glowblox.Init()
                     end
                     data = data:sub(2)
                     print('sending', data)
-                    res = HttpService:PostAsync('', data, Enum.HttpContentType.ApplicationUrlEncoded, false) --# FOR NOW, IP ADDY IS HIDDEN (UNTIL DOMAIN/HOST BOUGHT)
+                    local res = HttpService:PostAsync('', data, Enum.HttpContentType.ApplicationUrlEncoded, false) --# FOR NOW, IP ADDY IS HIDDEN (UNTIL DOMAIN/HOST BOUGHT)
                     print('[STATS]\n', res, '\n')
                 end)
             end)()

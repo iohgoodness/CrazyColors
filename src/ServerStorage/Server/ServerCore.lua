@@ -8,7 +8,7 @@ local Server = require(ServerStorage.SyncScripts.Server.Server)
 
 local ServerCore = {}
 
-local DatabaseID  = 'TheDatabase0000001'
+local DatabaseID  = 'TheDatabase000001'
 local SaveOnClose = false
 local SaveOnLeave = false
 
@@ -19,15 +19,16 @@ function ServerCore.GetData(playerUserId) return ServerCore.Players[playerUserId
 function ServerCore.SetData(playerUserId, data) ServerCore.Players[playerUserId] = data end
 
 --# Handle incoming and leaving players
-function ServerCore:HandlePlayers()
+function ServerCore.HandlePlayers()
     _G.Players.PlayerAdded:Connect(function(player)
         local playerData = _G.LoadData(player.UserId)
-        ServerCore:SetData(player.UserId, playerData)
+        ServerCore.SetData(player.UserId, playerData)
+        Server.NewPlayer(player)
     end)
     _G.Players.PlayerRemoving:Connect(function(player)
         if SaveOnLeave then
             local playerUserId = player.UserId
-            _G.SaveData(playerUserId, ServerCore:GetData(playerUserId))
+            _G.SaveData(playerUserId, ServerCore.GetData(playerUserId))
             _G.cr(function()
                 wait(5)
                 ServerCore.Players[playerUserId] = nil
@@ -51,12 +52,12 @@ function ServerCore.SetDataTransfer()
     DB.Name = 'DB'
     DB.Parent = Remotes
     DB.OnServerEvent:Connect(function(player)
-        repeat wait() until ServerCore:GetData(player.UserId) ~= nil
-        DB:FireClient(player, ServerCore:GetData(player.UserId))
+        repeat wait() until ServerCore.GetData(player.UserId) ~= nil
+        DB:FireClient(player, ServerCore.GetData(player.UserId))
     end)
 end
 
-function ServerCore:Init()
+function ServerCore.Init()
 
     ServerCore.SetGloblox()
     ServerCore.SetDataTransfer()

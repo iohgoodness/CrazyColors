@@ -1,7 +1,7 @@
 
 local Client = {}
 
-function Client:Init()
+function Client.Init()
     --game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
     
     --# Util Modules
@@ -13,8 +13,6 @@ function Client:Init()
     --require(_G.RS:WaitForChild('Client'):WaitForChild('GridSystem')).Init()
 
     require(_G.RS:WaitForChild('Client'):WaitForChild('DoubleJump')).Init()
-
-    --require(_G.RS:WaitForChild('Client'):WaitForChild('MetatablesTesting')):Init()
 end
 
 return Client

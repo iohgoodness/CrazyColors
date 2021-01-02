@@ -32,6 +32,7 @@ function Data.Init()
             genRemotes:FireServer(params)
         else warn ('remote', remoteName, 'could not be found!') end
     end
+    _G.UI.SpeedTextLabel.Text = _G.db.WalkSpeed .. ' MPH'
 end
 
 return Data

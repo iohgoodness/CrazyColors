@@ -2,9 +2,8 @@
 local DB = {}
 
 DB = {
-    Inventory = {
-        
-    }
+    WalkSpeed = 3,
+    TotalMovement = 0,
 }
 
 return DB
