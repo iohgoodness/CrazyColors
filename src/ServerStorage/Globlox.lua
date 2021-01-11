@@ -403,6 +403,15 @@ function Glowblox.Init()
         _G.UIS = _G.UserInputService
         _G.Camera = workspace.CurrentCamera
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
+        _G.Mobile = false
+
+        local UIS = game:GetService("UserInputService")
+        local GuiService = game:GetService("GuiService")
+
+        if UIS.TouchEnabled and not UIS.KeyboardEnabled and not UIS.MouseEnabled
+        and not UIS.GamepadEnabled and not GuiService:IsTenFootInterface() then
+            _G.Mobile = true
+        end
 
         local function stringToInstance(str)
             local segments = str:split(".")
