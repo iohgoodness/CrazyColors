@@ -422,6 +422,17 @@ function Glowblox.Init()
             return current
         end
 
+        --# Debounce for button
+        _G.btn = function(debounceTime, func, ...)
+            local deb = false
+            if not deb then
+                deb = true
+                func(...)
+                wait(debounceTime)
+                deb = false
+            end
+        end
+
         --# Configure the UI
         _G.UI = require(_G.RS:WaitForChild('Client'):WaitForChild('Util'):WaitForChild('GeneratedUI'))
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
