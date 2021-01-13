@@ -15,6 +15,8 @@ function Client.Init()
     --require(_G.RS:WaitForChild('Client'):WaitForChild('Camera')).Init()
     require(_G.RS:WaitForChild('Client'):WaitForChild('DoubleJump')).Init()
 
+    require(_G.RS:WaitForChild('Client'):WaitForChild('UI'):WaitForChild('UITest')).Init()
+
     --# require(_G.RS:WaitForChild('Client'):WaitForChild('Lobby')).Init()
 end
 
