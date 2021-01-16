@@ -353,6 +353,8 @@ function Glowblox.Init()
             end
         end
 
+        --# if trying to save data, implement something that saves the data elsewhere and pushes the save to another server
+
         --# Save data for a player
         --# @params: playerUserId(userid for player), playerData(new copy custom for that player of the database), retryTimer(time until retry starts again), verbose(give debug messages)
         _G.SaveData = function(playerUserId, playerData, retryTimer, verbose)
