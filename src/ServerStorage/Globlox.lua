@@ -407,6 +407,10 @@ function Glowblox.Init()
         _G.Mouse = _G.Players.LocalPlayer:GetMouse()
         _G.Mobile = false
 
+        _G.cli = function(fileName)
+            return _G.RS:WaitForChild('Client'):WaitForChild(fileName)
+        end
+
         local UIS = game:GetService("UserInputService")
         local GuiService = game:GetService("GuiService")
 
