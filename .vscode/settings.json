@@ -29,7 +29,8 @@
         "Color3",
         "wait",
         "len",
-        "newproxy"
+        "newproxy",
+        "test"
     ],
     "Lua.diagnostics.disable": [
         "trailing-space",
