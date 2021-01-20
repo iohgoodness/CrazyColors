@@ -2,7 +2,8 @@
 local Server = {}
 
 function Server.Init()
-    require(_G.Sync.Server.SpeedSimulator).Init()
+    --require(_G.Sync.Server.SpeedSimulator).Init()
+    require(_G.Sync.Server.Test).Init()
 end
 
 function Server.NewPlayer(player)
