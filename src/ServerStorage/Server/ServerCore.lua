@@ -73,7 +73,7 @@ function ServerCore.Init()
 
     if SaveOnClose then
         game:BindToClose(function()
-            for k,player in pairs(Players:GetChildren()) do
+            for k,player in pairs(_G.Players:GetChildren()) do
                 _G.cr(function()
                     local playerUserId = player.UserId
                     _G.SaveData(playerUserId, ServerCore:GetData(playerUserId))

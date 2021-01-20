@@ -408,7 +408,7 @@ function Glowblox.Init()
         _G.Mobile = false
 
         _G.cli = function(fileName)
-            return _G.RS:WaitForChild('Client'):WaitForChild(fileName)
+            return require(_G.RS:WaitForChild('Client'):WaitForChild(fileName))
         end
 
         local UIS = game:GetService("UserInputService")
