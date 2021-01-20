@@ -30,7 +30,6 @@
         "wait",
         "len",
         "newproxy",
-        "test"
     ],
     "Lua.diagnostics.disable": [
         "trailing-space",
