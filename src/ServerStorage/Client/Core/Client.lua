@@ -13,12 +13,16 @@ function Client.Init()
     --require(_G.RS:WaitForChild('Client'):WaitForChild('GridSystem')).Init()
 
     --require(_G.RS:WaitForChild('Client'):WaitForChild('Camera')).Init()
-    require(_G.RS:WaitForChild('Client'):WaitForChild('DoubleJump')).Init()
-    _G.cli('Arms').Init()
+    -- require(_G.RS:WaitForChild('Client'):WaitForChild('DoubleJump')).Init()
+    _G.cli('DoubleJump').Init()
+
+    --# Custom toolsbar
+    _G.cli('Tools').Init()
+    -- _G.cli('Arms').Init()
 
     --require(_G.RS:WaitForChild('Client'):WaitForChild('UI'):WaitForChild('UITest')).Init()
 
-    _G.cli('NewPlacement').Init()
+    -- _G.cli('NewPlacement').Init()
 
     --# require(_G.RS:WaitForChild('Client'):WaitForChild('Lobby')).Init()
 end
