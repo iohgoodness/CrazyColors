@@ -439,6 +439,19 @@ function Glowblox.Init()
             end
         end
 
+        _G.delayed = {}
+        _G.delay = function(func, timer)
+            _G.delayed[#_G.delayed+1] = {func, tick()+timer}
+        end
+        _G.RunService.Stepped:Connect(function()
+            for i, v in pairs(_G.delayed) do
+                if tick() - v[2] then
+                    table.remove(_G.delayed, i)
+                    v[1]()
+                end
+            end
+        end)
+
         --# Configure the UI
         _G.UI = require(_G.RS:WaitForChild('Client'):WaitForChild('Util'):WaitForChild('GeneratedUI'))
         local function removePeriod(str) local segments = str:split('.') local output = '' for k,segment in pairs(segments) do output = output .. segment end return output end
