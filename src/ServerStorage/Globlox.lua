@@ -439,14 +439,14 @@ function Glowblox.Init()
             end
         end
 
-        _G.delayed = {}
+        local delayed = {}
         _G.delay = function(func, timer)
-            _G.delayed[#_G.delayed+1] = {func, tick()+timer}
+            delayed[#delayed+1] = {func, tick()+timer}
         end
         _G.RunService.Stepped:Connect(function()
-            for i, v in pairs(_G.delayed) do
+            for i, v in pairs(delayed) do
                 if tick() - v[2] then
-                    table.remove(_G.delayed, i)
+                    table.remove(delayed, i)
                     v[1]()
                 end
             end
